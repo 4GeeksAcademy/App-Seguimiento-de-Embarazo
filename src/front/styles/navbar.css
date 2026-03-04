@@ -1,0 +1,131 @@
+/* ============================= */
+/* ESPACIO PARA NAVBAR FIJO */
+/* ============================= */
+
+body {
+    padding-top: 90px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ============================= */
+/* NAVBAR BASE */
+/* ============================= */
+
+.navbar {
+    background-color: #ffffff !important;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Espaciado horizontal real */
+.navbar-inner {
+    padding: 18px 10px;
+}
+
+/* Sombra muy sutil al hacer scroll */
+.navbar.scrolled {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+}
+
+/* ============================= */
+/* LOGO */
+/* ============================= */
+
+.navbar-brand {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-right: 40px;
+    color: #111 !important;
+}
+
+/* ============================= */
+/* LINKS */
+/* ============================= */
+
+/* Espaciado entre items */
+.navbar-nav>li {
+    margin-right: 20px;
+}
+
+.navbar-nav>li:last-child {
+    margin-right: 0;
+}
+
+/* Estilo base links */
+.custom-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #555 !important;
+    padding: 6px 14px;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover cápsula gris claro */
+.custom-link:hover {
+    background-color: #f3f3f3;
+    color: #111 !important;
+}
+
+/* ============================= */
+/* BOTÓN LOGIN */
+/* ============================= */
+
+.nav-button {
+    margin-left: 35px;
+}
+
+.custom-btn {
+    background-color: #111 !important;
+    color: #ffffff !important;
+    border-radius: 999px !important;
+    padding: 8px 20px !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none !important;
+    display: inline-block;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.custom-btn:hover {
+    background-color: #222 !important;
+}
+
+/* ============================= */
+/* TOGGLER (MÓVIL) */
+/* ============================= */
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 991px) {
+
+    .navbar-inner {
+        padding: 20px 30px;
+    }
+
+    .navbar-collapse {
+        padding-top: 20px;
+    }
+
+    .navbar-nav>li {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .nav-button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
