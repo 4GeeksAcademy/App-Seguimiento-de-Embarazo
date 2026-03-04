@@ -5,7 +5,8 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from sqlalchemy import select  
+from sqlalchemy import select
+from flask_jwt_extended import create_access_token, get_jwt_identity
 
 
 api = Blueprint('api', __name__)
@@ -45,3 +46,25 @@ def register():
     db.session.commit()
 
     return jsonify({"msg": "User created successfully"}), 201
+
+
+@api.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+    
+    if not email or not password:
+        return jsonify({"error": "email and password are required"}), 400
+    
+    existing_user = db.session.execute(select(User).where(
+        User.email == email)).scalar_one_or_none()
+    
+    if existing_user is None:
+        return jsonify({"error": "Invalid mail or password"}), 400
+    
+    if existing_user.check_password(password):
+        access_token = create_access_token(identity=str(existing_user.id))
+        return jsonify({"msg": "Login successful", "token": access_token, "user": existing_user.serialize()}), 200
+    else:
+        return jsonify({"error": "Invalid mail or password"}), 400
