@@ -29,6 +29,9 @@ export const createUser = async (user, navigate) => {
   }
 };
 
+
+
+
 export const LoginUser = async (user, navigate) => {
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/api/login`,  
@@ -57,4 +60,40 @@ export const LoginUser = async (user, navigate) => {
   
   alert("Login successful!");
   navigate("/registroEmbarazo");
+};
+
+
+
+export const createRegistroEmbarazo = async (registro, navigate) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/registroEmbarazo`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registro),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Error al crear registro de embarazo:", data.error);
+      alert(data.error || "Error al crear registro");
+      return;
+    }
+
+    console.log("Registro de embarazo creado:", data);
+    alert("Registro de embarazo creado correctamente");
+
+      if (navigate) {
+      navigate("/panelPersonal");  
+    }
+
+  } catch (error) {
+    console.error("Error de red:", error);
+    alert("Error al conectar con el servidor");
+  }
 };

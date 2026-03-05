@@ -2,11 +2,13 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, RegistroEmbarazo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity
+
+
 
 
 api = Blueprint('api', __name__)
@@ -68,3 +70,25 @@ def login():
         return jsonify({"msg": "Login successful", "token": access_token, "user": existing_user.serialize()}), 200
     else:
         return jsonify({"error": "Invalid mail or password"}), 400
+    
+
+@api.route('/registroEmbarazo', methods=['POST'])
+def registroEmbarazo():
+    data = request.get_json()
+
+    name = data.get("name")
+    ultimaFechaMestruacion = data.get("ultimaFechaMestruacion")
+    pesoInicioEmbarazo = data.get("pesoInicioEmbarazo")
+    cicloMestrual = data.get("cicloMestrual")
+
+    registro_embarazo = RegistroEmbarazo(
+        name=name,
+        ultimaFechaMestruacion=ultimaFechaMestruacion,
+        pesoInicioEmbarazo=pesoInicioEmbarazo,
+        cicloMestrual=cicloMestrual
+    )
+
+    db.session.add(registro_embarazo)
+    db.session.commit()
+
+    return jsonify({"msg": "Registro creado correctamente"}), 201
