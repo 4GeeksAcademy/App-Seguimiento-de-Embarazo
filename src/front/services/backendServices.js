@@ -21,7 +21,7 @@ export const createUser = async (user, navigate) => {
     
     console.log("Usuario creado exitosamente:", data);
     alert("Usuario creado exitosamente. Ahora puedes iniciar sesión.");
-    navigate("/");  
+    navigate("/login");  
     
   } catch (error) {
     console.error("Error de red:", error);
@@ -29,3 +29,32 @@ export const createUser = async (user, navigate) => {
   }
 };
 
+export const LoginUser = async (user, navigate) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/api/login`,  
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    }
+  );
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    if (response.status === 400) {
+      alert("Email or password invalid");
+      return;
+    }
+  }
+  
+  if (data.token) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+  }
+  
+  alert("Login successful!");
+  navigate("/registroEmbarazo");
+};
