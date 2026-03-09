@@ -23,6 +23,7 @@ sqlalchemy = "*"
 flask-bcrypt = "*"
 requests = "*"
 reportlab = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.13"

@@ -197,3 +197,24 @@ class Informe(db.Model):
     datos_json: Mapped[str] = mapped_column(Text)
 
     url_pdf: Mapped[str] = mapped_column(String(500))
+
+
+class TamanioBebe(db.Model):
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    semana: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+
+    fruta: Mapped[str] = mapped_column(String(100))
+
+    tamano_cm: Mapped[float] = mapped_column(Float)
+
+    def serialize(self):
+        return {
+            "semana": self.semana,
+            "fruta": self.fruta,
+            "tamano_cm": self.tamano_cm
+        }
+    
+
+    
