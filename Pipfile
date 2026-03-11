@@ -25,6 +25,10 @@ matplotlib = "*"
 requests = "*"
 flask-cors = "*"
 flask-bcrypt = "*"
+flask-bcrypt = "*"
+reportlab = "*"
+matplotlib = "*"
+requests = "*"
 
 [requires]
 python_version = "3.13"

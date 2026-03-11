@@ -36,7 +36,7 @@ export const Contact = () => {
                         <div className="card-body p-5">
                             <div className="text-center mb-4">
                                 <i className="fas fa-envelope fa-4x text-primary mb-3"></i>
-                                <h2 className="fw-bold">Contacto</h2>
+                                <h2 className="fw-bold">Contáctanos</h2>
                                 <p className="text-muted">
                                     ¿Tienes alguna pregunta o problema? Envianos un mensaje y te responderemos lo antes posible.
                                 </p>

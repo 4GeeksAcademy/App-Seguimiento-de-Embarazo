@@ -215,7 +215,6 @@ class TamanioBebe(db.Model):
             "tamano_cm": self.tamano_cm
         }
     
-
     
 class Contact(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
