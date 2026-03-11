@@ -18,7 +18,6 @@ from flask import send_file
 from reportlab.pdfgen import canvas
 
 
-
 api = Blueprint('api', __name__)
 
 CORS(api)
@@ -53,7 +52,6 @@ def generar_grafica_peso(registros):
     buffer.seek(0)
 
     return buffer
-
 
 
 # *******FUNCION GRAFICA COMPARATIVA DE PESOS *************
@@ -93,7 +91,6 @@ def generar_grafica_peso_comparado(registros, peso_recomendado):
     buffer.seek(0)
 
     return buffer
-
 
 
 # HELLO TEST
@@ -141,7 +138,6 @@ def register():
     return jsonify({"msg": "User created successfully"}), 201
 
 
-
 # LOGIN
 
 @api.route('/login', methods=['POST'])
@@ -172,7 +168,6 @@ def login():
         "token": token,
         "user": existing_user.serialize()
     }), 200
-
 
 
 # CREAR EMBARAZO
@@ -219,7 +214,6 @@ def crear_embarazo():
     return jsonify({"msg": "Pregnancy created"}), 201
 
 
-
 # OBTENER EMBARAZO
 
 @api.route('/embarazo/<int:user_id>', methods=['GET'])
@@ -241,7 +235,6 @@ def obtener_embarazo(user_id):
         data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
 
     return jsonify(data), 200
-
 
 
 # CREAR REGISTRO DIARIO
@@ -276,7 +269,6 @@ def crear_registro_diario():
     return jsonify({"msg": "Register created"}), 201
 
 
-
 # OBTENER REGISTROS
 
 @api.route('/registro-diario/<int:user_id>', methods=['GET'])
@@ -297,7 +289,6 @@ def obtener_registros(user_id):
         resultado.append(data)
 
     return jsonify(resultado), 200
-
 
 
 # ACTUALIZAR REGISTRO
@@ -335,7 +326,6 @@ def actualizar_registro(registro_id):
     }), 200
 
 
-
 # CREAR SINTOMAS
 
 @api.route('/sintomas', methods=['POST'])
@@ -363,7 +353,6 @@ def crear_sintomas():
         "msg": "Symptoms saved",
         "sintomas": nuevos_sintomas.serialize()
     }), 201
-
 
 
 # OBTENER SINTOMAS
@@ -457,7 +446,8 @@ def historial_completo(user_id):
             embarazo_data["fecha_ultima_menstruacion"] = embarazo.fecha_ultima_menstruacion.isoformat()
 
         if embarazo.fecha_parto_estimada:
-            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
+            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat(
+            )
 
     return jsonify({
         "embarazo": embarazo_data,
@@ -491,9 +481,8 @@ def sintomas_por_usuario(user_id):
 
     return jsonify(resultado), 200
 
-
-
     # CALCULAR TRIMESTRE API
+
 
 @api.route('/calcular-trimestre/<int:user_id>', methods=['GET'])
 def calcular_trimestre(user_id):
@@ -596,7 +585,6 @@ def calcular_semana_embarazo(user_id):
     return jsonify(response.json()), 200
 
 
-
 # ********TAMANIO BEBE************
 
 @api.route('/tamanio-bebe/<int:semana>', methods=['GET'])
@@ -669,6 +657,7 @@ def generar_informe(user_id):
 
 # VER GRÁFICA PESO
 
+
 @api.route('/grafica-peso/<int:user_id>', methods=['GET'])
 def grafica_peso(user_id):
 
@@ -682,7 +671,6 @@ def grafica_peso(user_id):
         return jsonify({"error": "No weight data"}), 404
 
     return send_file(grafica, mimetype="image/png")
-
 
 
 @api.route('/info-bebe/<int:user_id>', methods=['GET'])
@@ -821,9 +809,8 @@ def dashboard(user_id):
 
     }), 200
 
-
-
 # ****PESO RECOMENDADO DURANTE EMBARAZO*******
+
 
 @api.route('/peso-recomendado/<int:user_id>', methods=['GET'])
 def peso_recomendado(user_id):
@@ -887,8 +874,6 @@ def peso_recomendado(user_id):
     return jsonify(response.json()), 200
 
 
-
-
 # **********Grafica Comparativa Pesos *****************
 
 @api.route('/grafica-peso-comparado/<int:user_id>', methods=['GET'])
@@ -905,7 +890,6 @@ def grafica_peso_comparado(user_id):
     if not registros:
         return jsonify({"error": "No records"}), 404
 
-   
     peso_inicial = registros[0].peso
 
     peso_recomendado = peso_inicial + 12  # estimación promedio embarazo
