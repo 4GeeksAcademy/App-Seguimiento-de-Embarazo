@@ -51,7 +51,7 @@ export const Contact = () => {
                                         className="form-control form-control-lg"
                                         id="email"
                                         name="email"
-                                        placeholder="tu@email.com"
+                                        placeholder="ejemplo@email.com"
                                         value={contactData.email}
                                         onChange={handleChange}
                                         required/>
