@@ -39,9 +39,9 @@ export const router = createBrowserRouter(
         <Route path="/contact" element={<Contact />} /> 
         <Route path="/registroEmbarazo" element={<RegistroEmbarazo />} />
         <Route path="/informacion" element={<Information />} />
-          <Route path="/recordatorio" element={<Recordatorios />} />
+        <Route path="/recordatorio" element={<Recordatorios />} />
         <Route path="/noticias" element={<Noticias />} />
-         <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
+        <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
        
       </Route>
     )
