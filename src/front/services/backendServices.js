@@ -58,3 +58,38 @@ export const LoginUser = async (user, navigate) => {
   alert("Login successful!");
   navigate("/registroEmbarazo");
 };
+
+
+export const sendContactMessage = async (contactData, navigate) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/contact`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(contactData),
+      }
+    );
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      alert(data.error || "Error al enviar el mensaje");
+      return false;
+    }
+    
+    alert("¡Mensaje enviado con éxito! Te responderemos a la brevedad.");
+    
+    if (navigate) {
+      navigate("/");
+    }
+    
+    return true;
+    
+  } catch (error) {
+    alert("Error al conectar con el servidor");
+    return false;
+  }
+};

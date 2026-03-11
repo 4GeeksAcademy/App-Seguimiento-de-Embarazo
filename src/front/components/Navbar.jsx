@@ -44,7 +44,7 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Contacto" onClick={() => setMenuOpen(false)}>Contacto</Link>
+							<Link className="nav-link custom-link" to="/contact" onClick={() => setMenuOpen(false)}>Contacto</Link>
 						</li>
 
 						<li className="nav-item">
