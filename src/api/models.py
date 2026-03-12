@@ -220,3 +220,18 @@ class TamanioBebe(db.Model):
             "fruta": self.fruta,
             "tamano_cm": self.tamano_cm
         }
+    
+class Contact(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_at: Mapped[str] = mapped_column(db.DateTime, server_default=db.func.now())
+  
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "description": self.description,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
+    
