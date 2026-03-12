@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 
 from flask import request, jsonify, Blueprint
-from api.models import db, User, Contact, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, TamanioBebe
+from api.models import db, User, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, TamanioBebe
 from api.utils import APIException
 from flask_cors import CORS
 from sqlalchemy import select
@@ -900,23 +900,3 @@ def grafica_peso_comparado(user_id):
         return jsonify({"error": "No weight data"}), 404
 
     return send_file(grafica, mimetype="image/png")
-
-    
-@api.route('/contact', methods=['POST'])
-def create_contact():
-    data = request.get_json()
-    email = data.get("email")
-    description = data.get("description")
-    
-    if not email or not description:
-        return jsonify({"error": "Email and description are required"}), 400
-
-    new_contact = Contact(
-        email=email, 
-        description=description
-    )
-    
-    db.session.add(new_contact)
-    db.session.commit()
-    
-    return jsonify({"msg": "Contact message sent successfully"}), 200
