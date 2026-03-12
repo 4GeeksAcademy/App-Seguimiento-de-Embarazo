@@ -23,31 +23,33 @@ export const RegistroEmbarazo = () => {
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/embarazo`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/registroEmbarazo`,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem("token")}`
-                    },
-                    body: JSON.stringify(formData)
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ...formData,
+                        peso_inicial: parseFloat(formData.peso_inicial),
+                        longitud_ciclo: parseInt(formData.longitud_ciclo)
+                    }),
                 }
             );
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("✅ Datos guardados exitosamente");
-                navigate("/dashboard");
-            } else {
-                alert(data.error || "Error al guardar los datos");
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Error del backend:", text);
+                return;
             }
+
+            const data = await response.json();
+            console.log("Respuesta del backend:", data);
+
+
+            navigate("/panelPersonal");
         } catch (error) {
-            console.error("Error:", error);
-            alert("Error al conectar con el servidor");
+            console.error("Error al hacer fetch:", error);
         }
     };
-
 
     return (
         <div
@@ -86,12 +88,10 @@ export const RegistroEmbarazo = () => {
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-4">
                                 <form onSubmit={handleSubmit}>
-
-                                    
                                     <div className="mb-4">
                                         <label className="form-label fw-bold" style={{ color: "#6a4c93" }}>
-                                            <i className="fas fa-user-circle me-2"></i>
-                                            ¿Cómo te llamas?
+                                            <i className="fas fa-user me-2"></i>
+                                            Nombre
                                         </label>
                                         <input
                                             type="text"
@@ -103,7 +103,7 @@ export const RegistroEmbarazo = () => {
                                             required
                                         />
                                         <small className="form-text text-muted fst-italic">
-                                            Para personalizar tu experiencia
+                                            Tu nombre completo
                                         </small>
                                     </div>
                                     <div className="mb-4">

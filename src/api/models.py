@@ -25,13 +25,13 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    nombre: Mapped[str] = mapped_column(String(100))
-    apellido: Mapped[str] = mapped_column(String(100))
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    apellido: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    altura: Mapped[float] = mapped_column(Float)
-    fecha_nacimiento: Mapped[Date] = mapped_column(Date)
+    altura: Mapped[float] = mapped_column(Float,nullable=True)
+    fecha_nacimiento: Mapped[Date] = mapped_column(Date,nullable=True)
 
     fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
 
@@ -66,7 +66,6 @@ class Embarazo(db.Model):
 
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    fecha_ultima_menstruacion: Mapped[Date] = mapped_column(Date, nullable=False)
 
     fecha_parto_estimada: Mapped[Date] = mapped_column(Date)
 
@@ -88,21 +87,21 @@ class RegistroEmbarazo(db.Model):
     embarazo_id: Mapped[int] = mapped_column(ForeignKey("embarazo.id"))
     
 
-    name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    ultima_fecha_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
-    pesoInicioEmbarazo: Mapped[float] = mapped_column(Float, nullable=False)
-    cicloMestrual: Mapped[int] = mapped_column(nullable=False)
+   
+    ultima_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
+    peso_inicial: Mapped[float] = mapped_column(Float, nullable=False)
+    longitud_ciclo: Mapped[int] = mapped_column(nullable=False)
 
 
     def serialize(self):
         return {
             "id": self.id,
-            "usuario_id": self.usuario_id,
-            "fecha_ultima_menstruacion": self.fecha_ultima_menstruacion,
-            "fecha_parto_estimada": self.fecha_parto_estimada,
-            "numero_bebes": self.numero_bebes,
-            "doctor": self.doctor,
-            "hospital": self.hospital
+            "embarazo_id": self.embarazo_id,
+            "ultima_menstruacion": self.ultima_menstruacion,
+            "peso_inicial": self.peso_inicial,
+            "longitud_ciclo": self.longitud_ciclo,
+           
+           
         }
 
 
@@ -412,37 +411,6 @@ class Informe(db.Model):
         
 
     
-    
-class RegistroEmbarazo(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    embarazo_id: Mapped[int] = mapped_column(ForeignKey("embarazo.id"))
-    
 
-    name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    ultima_fecha_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
-    pesoInicioEmbarazo: Mapped[float] = mapped_column(Float, nullable=False)
-    cicloMestrual: Mapped[int] = mapped_column(nullable=False)
-
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "embarazo_id": self.embarazo_id,
-            "name": self.name,
-            "ultimaFechaMestruacion": self.ultimaFechaMestruacion,
-            "pesoInicioEmbarazo": self.pesoInicioEmbarazo,
-            "cicloMestrual": self.cicloMestrual,
-
-            # do not serialize the password, its a security breach
-        }
-    
-
-
-
-    
-
-            # do not serialize the password, its a security breach
-        
-    
 
 

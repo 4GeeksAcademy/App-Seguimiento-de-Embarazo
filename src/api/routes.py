@@ -925,16 +925,19 @@ def grafica_peso_comparado(user_id):
 def registroEmbarazo():
     data = request.get_json()
 
-    name = data.get("name")
-    ultimaFechaMestruacion = data.get("ultimaFechaMestruacion")
-    pesoInicioEmbarazo = data.get("pesoInicioEmbarazo")
-    cicloMestrual = data.get("cicloMestrual")
+    embarazo_id = data.get("embarazo_id")
+    ultima_menstruacion = data.get("ultima_menstruacion")
+    peso_inicial = data.get("peso_inicial")
+    longitud_ciclo = data.get("longitud_ciclo")
+
+    if not longitud_ciclo  or not ultima_menstruacion:
+        return jsonify({"error": "Datos incorretos"}), 400
 
     registro_embarazo = RegistroEmbarazo(
-        name=name,
-        ultimaFechaMestruacion=ultimaFechaMestruacion,
-        pesoInicioEmbarazo=pesoInicioEmbarazo,
-        cicloMestrual=cicloMestrual
+        embarazo_id=embarazo_id,
+        ultima_menstruacion=ultima_menstruacion,
+        peso_inicial=peso_inicial,
+        longitud_ciclo=longitud_ciclo
     )
 
     db.session.add(registro_embarazo)
