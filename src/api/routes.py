@@ -1,7 +1,6 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-
 from flask import request, jsonify, Blueprint
 from api.models import db, User, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, TamanioBebe
 from api.utils import APIException
@@ -16,6 +15,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from flask import send_file
 from reportlab.pdfgen import canvas
+
 
 
 api = Blueprint('api', __name__)

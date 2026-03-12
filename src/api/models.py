@@ -14,17 +14,19 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
 
-    nombre: Mapped[str] = mapped_column(String(100))
-    apellido: Mapped[str] = mapped_column(String(100))
+    nombre: Mapped[str] = mapped_column(String(100), nullable=True)
+    apellido: Mapped[str] = mapped_column(String(100), nullable=True)
 
-    altura: Mapped[float] = mapped_column(Float)
-    fecha_nacimiento: Mapped[Date] = mapped_column(Date)
+    altura: Mapped[float] = mapped_column(Float, nullable=True)
+    fecha_nacimiento: Mapped[Date] = mapped_column(Date, nullable=True)
 
-    fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
+    fecha_registro: Mapped[Date] = mapped_column(
+        Date, default=date.today, nullable=True)
 
-    activo: Mapped[bool] = mapped_column(Boolean, default=True)
+    activo: Mapped[bool] = mapped_column(Boolean, default=True,  nullable=True)
 
-    embarazo = relationship("Embarazo", back_populates="usuario", uselist=False)
+    embarazo = relationship(
+        "Embarazo", back_populates="usuario", uselist=False)
     registros = relationship("RegistroDiario", back_populates="usuario")
     recordatorios = relationship("Recordatorio", back_populates="usuario")
 
@@ -98,11 +100,13 @@ class RegistroDiario(db.Model):
 
     notas: Mapped[str] = mapped_column(Text)
 
-    fecha_creacion: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
+    fecha_creacion: Mapped[DateTime] = mapped_column(
+        DateTime, default=datetime.utcnow)
 
     usuario = relationship("User", back_populates="registros")
 
-    sintomas = relationship("Sintomas", back_populates="registro", cascade="all, delete")
+    sintomas = relationship(
+        "Sintomas", back_populates="registro", cascade="all, delete")
 
     def serialize(self):
         return {
@@ -190,7 +194,8 @@ class Informe(db.Model):
 
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    fecha_generacion: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
+    fecha_generacion: Mapped[DateTime] = mapped_column(
+        DateTime, default=datetime.utcnow)
 
     tipo_informe: Mapped[str] = mapped_column(String(50))
 
@@ -215,6 +220,3 @@ class TamanioBebe(db.Model):
             "fruta": self.fruta,
             "tamano_cm": self.tamano_cm
         }
-    
-
-    
