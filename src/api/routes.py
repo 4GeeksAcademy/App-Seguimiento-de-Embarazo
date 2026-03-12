@@ -27,7 +27,6 @@ from reportlab.pdfgen import canvas
 
 
 
-
 api = Blueprint('api', __name__)
 
 CORS(api)
@@ -62,7 +61,6 @@ def generar_grafica_peso(registros):
     buffer.seek(0)
 
     return buffer
-
 
 
 # *******FUNCION GRAFICA COMPARATIVA DE PESOS *************
@@ -102,7 +100,6 @@ def generar_grafica_peso_comparado(registros, peso_recomendado):
     buffer.seek(0)
 
     return buffer
-
 
 
 # HELLO TEST
@@ -150,7 +147,6 @@ def register():
     return jsonify({"msg": "User created successfully"}), 201
 
 
-
 # LOGIN
 
 @api.route('/login', methods=['POST'])
@@ -181,7 +177,6 @@ def login():
         "token": token,
         "user": existing_user.serialize()
     }), 200
-
 
 
 # CREAR EMBARAZO
@@ -228,7 +223,6 @@ def crear_embarazo():
     return jsonify({"msg": "Pregnancy created"}), 201
 
 
-
 # OBTENER EMBARAZO
 
 @api.route('/embarazo/<int:user_id>', methods=['GET'])
@@ -250,7 +244,6 @@ def obtener_embarazo(user_id):
         data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
 
     return jsonify(data), 200
-
 
 
 # CREAR REGISTRO DIARIO
@@ -288,7 +281,6 @@ def crear_registro_diario():
     return jsonify({"msg": "Register created"}), 201
 
 
-
 # OBTENER REGISTROS
 
 @api.route('/registro-diario/<int:user_id>', methods=['GET'])
@@ -311,7 +303,6 @@ def obtener_registros(user_id):
         resultado.append(data)
 
     return jsonify(resultado), 200
-
 
 
 # ACTUALIZAR REGISTRO
@@ -349,7 +340,6 @@ def actualizar_registro(registro_id):
     }), 200
 
 
-
 # CREAR SINTOMAS
 
 @api.route('/sintomas', methods=['POST'])
@@ -377,7 +367,6 @@ def crear_sintomas():
         "msg": "Symptoms saved",
         "sintomas": nuevos_sintomas.serialize()
     }), 201
-
 
 
 # OBTENER SINTOMAS
@@ -473,9 +462,8 @@ def historial_completo(user_id):
             embarazo_data["fecha_ultima_menstruacion"] = embarazo.fecha_ultima_menstruacion.isoformat()
 
         if embarazo.fecha_parto_estimada:
-            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat(
-            )
             embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
+            
 
     return jsonify({
         "embarazo": embarazo_data,
@@ -513,9 +501,6 @@ def sintomas_por_usuario(user_id):
     # CALCULAR TRIMESTRE API
 
 
-
-
-    # CALCULAR TRIMESTRE API
 
 @api.route('/calcular-trimestre/<int:user_id>', methods=['GET'])
 def calcular_trimestre(user_id):
@@ -616,7 +601,6 @@ def calcular_semana_embarazo(user_id):
         return jsonify({"error": "External API error"}), 500
 
     return jsonify(response.json()), 200
-
 
 
 # ********TAMANIO BEBE************
@@ -935,333 +919,6 @@ def grafica_peso_comparado(user_id):
 
     return send_file(grafica, mimetype="image/png")
 
-@api.route('/contact', methods=['POST'])
-def create_contact():
-    data = request.get_json()
-    email = data.get("email")
-    description = data.get("description")
-    
-    if not email or not description:
-        return jsonify({"error": "Email and description are required"}), 400
-
-    new_contact = Contact(
-        email=email, 
-        description=description
-    )
-    
-    db.session.add(new_contact)
-    db.session.commit()
-    
-    return jsonify({"msg": "Contact message sent successfully"}), 200
-    if existing_user.check_password(password):
-        access_token = create_access_token(identity=str(existing_user.id))
-        return jsonify({"msg": "Login successful", "token": access_token, "user": existing_user.serialize()}), 200
-    else:
-        return jsonify({"error": "Invalid mail or password"}), 400
-# ********GENERAR INFORME PDF*******
-
-@api.route('/generar-informe/<int:user_id>', methods=['GET'])
-def generar_informe(user_id):
-
-    embarazo = db.session.execute(
-        select(Embarazo).where(Embarazo.usuario_id == user_id)
-    ).scalar_one_or_none()
-
-    registros = db.session.execute(
-        select(RegistroDiario).where(RegistroDiario.usuario_id == user_id)
-    ).scalars().all()
-
-    if embarazo is None:
-        return jsonify({"error": "Pregnancy not found"}), 404
-
-    buffer = BytesIO()
-
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-
-    pdf.drawString(100, 750, "Pregnancy Monitoring Report")
-
-    y = 700
-
-    pdf.drawString(100, y, f"LMP: {embarazo.fecha_ultima_menstruacion}")
-    y -= 20
-
-    if embarazo.fecha_parto_estimada:
-        pdf.drawString(100, y, f"Due Date: {embarazo.fecha_parto_estimada}")
-        y -= 20
-
-    y -= 20
-
-    pdf.drawString(100, y, "Daily Records:")
-    y -= 20
-
-    for r in registros:
-
-        texto = f"Date: {r.fecha} | Weight: {r.peso} | Energy: {r.nivel_energia}"
-
-        pdf.drawString(100, y, texto)
-
-        y -= 20
-
-    pdf.save()
-
-    buffer.seek(0)
-
-    return send_file(
-        buffer,
-        as_attachment=True,
-        download_name="pregnancy_report.pdf",
-        mimetype="application/pdf"
-    )
-
-# VER GRÁFICA PESO
-
-@api.route('/grafica-peso/<int:user_id>', methods=['GET'])
-def grafica_peso(user_id):
-
-    registros = db.session.execute(
-        select(RegistroDiario).where(RegistroDiario.usuario_id == user_id)
-    ).scalars().all()
-
-    grafica = generar_grafica_peso(registros)
-
-    if grafica is None:
-        return jsonify({"error": "No weight data"}), 404
-
-    return send_file(grafica, mimetype="image/png")
-
-
-
-@api.route('/info-bebe/<int:user_id>', methods=['GET'])
-def info_bebe(user_id):
-
-    embarazo = db.session.execute(
-        select(Embarazo).where(Embarazo.usuario_id == user_id)
-    ).scalar_one_or_none()
-
-    if embarazo is None:
-        return jsonify({"error": "Pregnancy not found"}), 404
-
-    lmp = embarazo.fecha_ultima_menstruacion.isoformat()
-
-    url = "https://pregnancy-calculator-api.p.rapidapi.com/pregnancy-week"
-
-    headers = {
-        "x-rapidapi-host": "pregnancy-calculator-api.p.rapidapi.com",
-        "x-rapidapi-key": os.getenv("RAPIDAPI_KEY")
-    }
-
-    params = {
-        "lmp": lmp
-    }
-
-    response = requests.get(url, headers=headers, params=params)
-
-    if response.status_code != 200:
-        return jsonify({"error": "External API error"}), 500
-
-    data = response.json()
-
-    semana = data.get("week")
-
-    tamano = db.session.execute(
-        select(TamanioBebe).where(TamanioBebe.semana == semana)
-    ).scalar_one_or_none()
-
-    fruta = None
-    tamano_cm = None
-
-    if tamano:
-        fruta = tamano.fruta
-        tamano_cm = tamano.tamano_cm
-
-    return jsonify({
-        "semana": semana,
-        "fruta": fruta,
-        "tamano_cm": tamano_cm
-    }), 200
-
-
-# *******DASHBOARD*********
-
-@api.route('/dashboard/<int:user_id>', methods=['GET'])
-def dashboard(user_id):
-
-    embarazo = db.session.execute(
-        select(Embarazo).where(Embarazo.usuario_id == user_id)
-    ).scalar_one_or_none()
-
-    if embarazo is None:
-        return jsonify({"error": "Pregnancy not found"}), 404
-
-    registros = db.session.execute(
-        select(RegistroDiario)
-        .where(RegistroDiario.usuario_id == user_id)
-        .order_by(RegistroDiario.fecha.desc())
-    ).scalars().all()
-
-    ultimo_registro = registros[0] if registros else None
-
-    lmp = embarazo.fecha_ultima_menstruacion.isoformat()
-
-    url = "https://pregnancy-calculator-api.p.rapidapi.com/pregnancy-week"
-
-    headers = {
-        "x-rapidapi-host": "pregnancy-calculator-api.p.rapidapi.com",
-        "x-rapidapi-key": os.getenv("RAPIDAPI_KEY")
-    }
-
-    params = {
-        "lmp": lmp
-    }
-
-    response = requests.get(url, headers=headers, params=params)
-
-    semana = None
-
-    if response.status_code == 200:
-        semana = response.json().get("week")
-
-    fruta = None
-    tamano_cm = None
-
-    if semana:
-
-        tamano = db.session.execute(
-            select(TamanioBebe).where(TamanioBebe.semana == semana)
-        ).scalar_one_or_none()
-
-        if tamano:
-            fruta = tamano.fruta
-            tamano_cm = tamano.tamano_cm
-
-    sintomas = None
-
-    if ultimo_registro:
-
-        sintomas_obj = db.session.execute(
-            select(Sintomas).where(Sintomas.registro_id == ultimo_registro.id)
-        ).scalar_one_or_none()
-
-        if sintomas_obj:
-            sintomas = sintomas_obj.serialize()
-
-    return jsonify({
-
-        "embarazo": {
-            "lmp": embarazo.fecha_ultima_menstruacion,
-            "due_date": embarazo.fecha_parto_estimada,
-            "numero_bebes": embarazo.numero_bebes
-        },
-
-        "bebe": {
-            "semana": semana,
-            "fruta": fruta,
-            "tamano_cm": tamano_cm
-        },
-
-        "ultimo_registro": ultimo_registro.serialize() if ultimo_registro else None,
-
-        "sintomas": sintomas,
-
-        "total_registros": len(registros)
-
-    }), 200
-
-
-
-# ****PESO RECOMENDADO DURANTE EMBARAZO*******
-
-@api.route('/peso-recomendado/<int:user_id>', methods=['GET'])
-def peso_recomendado(user_id):
-
-    user = db.session.get(User, user_id)
-
-    embarazo = db.session.execute(
-        select(Embarazo).where(Embarazo.usuario_id == user_id)
-    ).scalar_one_or_none()
-
-    if user is None or embarazo is None:
-        return jsonify({"error": "User or pregnancy not found"}), 404
-
-    if user.altura is None:
-        return jsonify({"error": "User height required"}), 400
-
-    lmp = embarazo.fecha_ultima_menstruacion.isoformat()
-
-    url_week = "https://pregnancy-calculator-api.p.rapidapi.com/pregnancy-week"
-
-    headers = {
-        "x-rapidapi-host": "pregnancy-calculator-api.p.rapidapi.com",
-        "x-rapidapi-key": os.getenv("RAPIDAPI_KEY")
-    }
-
-    params_week = {
-        "lmp": lmp
-    }
-
-    response_week = requests.get(url_week, headers=headers, params=params_week)
-
-    if response_week.status_code != 200:
-        return jsonify({"error": "Week API error"}), 500
-
-    semana = response_week.json().get("week")
-
-    primer_registro = db.session.execute(
-        select(RegistroDiario)
-        .where(RegistroDiario.usuario_id == user_id)
-        .order_by(RegistroDiario.fecha.asc())
-    ).scalars().first()
-
-    if primer_registro is None:
-        return jsonify({"error": "No weight data available"}), 400
-
-    peso_inicial = primer_registro.peso
-
-    url = "https://pregnancy-calculator-api.p.rapidapi.com/pwr"
-
-    params = {
-        "pre_pregnancy_weight": peso_inicial,
-        "height": user.altura,
-        "gestational_age": semana
-    }
-
-    response = requests.get(url, headers=headers, params=params)
-
-    if response.status_code != 200:
-        return jsonify({"error": "External API error"}), 500
-
-    return jsonify(response.json()), 200
-
-
-
-
-# **********Grafica Comparativa Pesos *****************
-
-@api.route('/grafica-peso-comparado/<int:user_id>', methods=['GET'])
-def grafica_peso_comparado(user_id):
-
-    user = db.session.get(User, user_id)
-
-    registros = db.session.execute(
-        select(RegistroDiario)
-        .where(RegistroDiario.usuario_id == user_id)
-        .order_by(RegistroDiario.fecha.asc())
-    ).scalars().all()
-
-    if not registros:
-        return jsonify({"error": "No records"}), 404
-
-   
-    peso_inicial = registros[0].peso
-
-    peso_recomendado = peso_inicial + 12  # estimación promedio embarazo
-
-    grafica = generar_grafica_peso_comparado(registros, peso_recomendado)
-
-    if grafica is None:
-        return jsonify({"error": "No weight data"}), 404
-
-    return send_file(grafica, mimetype="image/png")
     
 
 @api.route('/registroEmbarazo', methods=['POST'])
