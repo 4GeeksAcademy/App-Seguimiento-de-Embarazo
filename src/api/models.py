@@ -4,14 +4,18 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from flask_bcrypt import generate_password_hash, check_password_hash
 from datetime import date, datetime
 from sqlalchemy import String, Float
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Float, Integer, Date, Float, Text, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from flask_bcrypt import generate_password_hash, check_password_hash
+from datetime import date, datetime
+
+from sqlalchemy import String, Float
+from sqlalchemy.orm import Mapped, mapped_column
 from flask_bcrypt import generate_password_hash, check_password_hash
 from sqlalchemy import ForeignKey
 from datetime import date, datetime
 from sqlalchemy import Column, Integer, String, Date
-from datetime import date, datetime
+
+
 
 db = SQLAlchemy()
 
@@ -21,7 +25,7 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), String(255), nullable=False)
 
     nombre: Mapped[str] = mapped_column(String(100), nullable=True)
     apellido: Mapped[str] = mapped_column(String(100), nullable=True)
@@ -76,6 +80,19 @@ class Embarazo(db.Model):
     activo: Mapped[bool] = mapped_column(Boolean, default=True)
 
     usuario = relationship("User", back_populates="embarazo")
+            # do not serialize the password, its a security breach
+        
+    
+class RegistroEmbarazo(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    embarazo_id: Mapped[int] = mapped_column(ForeignKey("embarazo.id"))
+    
+
+    name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    ultima_fecha_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
+    pesoInicioEmbarazo: Mapped[float] = mapped_column(Float, nullable=False)
+    cicloMestrual: Mapped[int] = mapped_column(nullable=False)
+
 
     def serialize(self):
         return {
@@ -418,6 +435,14 @@ class RegistroEmbarazo(db.Model):
 
             # do not serialize the password, its a security breach
         }
+    
+
+
+
+    
+
+            # do not serialize the password, its a security breach
+        
     
 
 
