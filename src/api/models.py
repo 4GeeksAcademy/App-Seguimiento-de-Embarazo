@@ -393,6 +393,8 @@ class Informe(db.Model):
     
             # do not serialize the password, its a security breach
         
+
+    
     
 class RegistroEmbarazo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
