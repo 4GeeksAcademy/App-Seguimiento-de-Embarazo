@@ -8,6 +8,8 @@ from api.utils import APIException
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, RegistroEmbarazo
 from api.utils import generate_sitemap, APIException
+from api.models import db, User, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, RegistroEmbarazo
+from api.utils import APIException
 from flask_cors import CORS
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token
@@ -20,6 +22,9 @@ from reportlab.lib.pagesizes import letter
 from flask import send_file
 from reportlab.pdfgen import canvas
 
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canv
 
 
 
@@ -143,6 +148,7 @@ def register():
     return jsonify({"msg": "User created successfully"}), 201
 
 
+
 # LOGIN
 
 @api.route('/login', methods=['POST'])
@@ -173,6 +179,7 @@ def login():
         "token": token,
         "user": existing_user.serialize()
     }), 200
+
 
 
 # CREAR EMBARAZO
@@ -219,6 +226,7 @@ def crear_embarazo():
     return jsonify({"msg": "Pregnancy created"}), 201
 
 
+
 # OBTENER EMBARAZO
 
 @api.route('/embarazo/<int:user_id>', methods=['GET'])
@@ -242,6 +250,7 @@ def obtener_embarazo(user_id):
     return jsonify(data), 200
 
 
+
 # CREAR REGISTRO DIARIO
 
 @api.route('/registro-diario', methods=['POST'])
@@ -254,6 +263,8 @@ def crear_registro_diario():
     try:
         fecha = datetime.strptime(
             data.get("fecha"), "%Y-%m-%d"
+        fecha_actual = datetime.strptime(
+            data.get("fecha_actual"), "%Y-%m-%d"
         ).date()
     except:
         return jsonify({"error": "Invalid fecha_actual"}), 400
@@ -261,6 +272,7 @@ def crear_registro_diario():
     nuevo_registro = RegistroDiario(
         usuario_id=usuario_id,
         fecha=fecha,
+        fecha_actual=fecha_actual,
         peso=data.get("peso"),
         estado_animo=data.get("estado_animo"),
         nivel_energia=data.get("nivel_energia"),
@@ -272,6 +284,7 @@ def crear_registro_diario():
     db.session.commit()
 
     return jsonify({"msg": "Register created"}), 201
+
 
 
 # OBTENER REGISTROS
@@ -290,10 +303,13 @@ def obtener_registros(user_id):
 
         if registro.fecha:
             data["fecha"] = registro.fecha.isoformat()
+        if registro.fecha_actual:
+            data["fecha_actual"] = registro.fecha_actual.isoformat()
 
         resultado.append(data)
 
     return jsonify(resultado), 200
+
 
 
 # ACTUALIZAR REGISTRO
@@ -331,6 +347,7 @@ def actualizar_registro(registro_id):
     }), 200
 
 
+
 # CREAR SINTOMAS
 
 @api.route('/sintomas', methods=['POST'])
@@ -358,6 +375,7 @@ def crear_sintomas():
         "msg": "Symptoms saved",
         "sintomas": nuevos_sintomas.serialize()
     }), 201
+
 
 
 # OBTENER SINTOMAS
@@ -437,6 +455,8 @@ def historial_completo(user_id):
 
         if registro.fecha:
             registro_data["fecha"] = registro.fecha.isoformat()
+        if registro.fecha_actual:
+            registro_data["fecha_actual"] = registro.fecha_actual.isoformat()
 
         registro_data["sintomas"] = sintomas.serialize() if sintomas else None
 
@@ -453,6 +473,7 @@ def historial_completo(user_id):
         if embarazo.fecha_parto_estimada:
             embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat(
             )
+            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
 
     return jsonify({
         "embarazo": embarazo_data,
@@ -481,6 +502,7 @@ def sintomas_por_usuario(user_id):
 
             resultado.append({
                 "fecha": registro.fecha.isoformat() if registro.fecha else None,
+                "fecha": registro.fecha_actual.isoformat() if registro.fecha_actual else None,
                 "sintomas": sintomas.serialize()
             })
 
@@ -488,6 +510,10 @@ def sintomas_por_usuario(user_id):
 
     # CALCULAR TRIMESTRE API
 
+
+
+
+    # CALCULAR TRIMESTRE API
 
 @api.route('/calcular-trimestre/<int:user_id>', methods=['GET'])
 def calcular_trimestre(user_id):
@@ -929,6 +955,7 @@ def create_contact():
         return jsonify({"msg": "Login successful", "token": access_token, "user": existing_user.serialize()}), 200
     else:
         return jsonify({"error": "Invalid mail or password"}), 400
+# ********GENERAR INFORME PDF*******
     
 
 @api.route('/registroEmbarazo', methods=['POST'])
