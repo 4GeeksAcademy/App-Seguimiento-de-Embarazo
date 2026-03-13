@@ -17,7 +17,6 @@ from flask import send_file
 from reportlab.pdfgen import canvas
 
 
-
 api = Blueprint('api', __name__)
 
 CORS(api)
@@ -240,36 +239,56 @@ def obtener_embarazo(user_id):
 # CREAR REGISTRO DIARIO
 
 @api.route('/registro-diario', methods=['POST'])
-def crear_registro_diario():
+def post_registro_diario():
+    body = request.get_json()
 
-    data = request.get_json()
+    if not body:
+        return jsonify({"error": "No data provided"}), 400
 
-    usuario_id = data.get("usuario_id")
+    usuario_id = body.get("usuario_id")
+    peso = body.get("peso")
+    fecha_str = body.get("fecha")  # Viene como "YYYY-MM-DD"
+
+    if not usuario_id or not peso:
+        return jsonify({"error": "Missing usuario_id or peso"}), 400
 
     try:
-        fecha = datetime.strptime(
-            data.get("fecha"), "%Y-%m-%d"
-        ).date()
-    except:
-        return jsonify({"error": "Invalid fecha_actual"}), 400
 
-    nuevo_registro = RegistroDiario(
-        usuario_id=usuario_id,
-        fecha=fecha,
-        peso=data.get("peso"),
-        estado_animo=data.get("estado_animo"),
-        nivel_energia=data.get("nivel_energia"),
-        ejercicio_minutos=data.get("ejercicio_minutos"),
-        notas=data.get("notas")
-    )
+        fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
 
-    db.session.add(nuevo_registro)
-    db.session.commit()
+        nuevo_registro = RegistroDiario(
+            usuario_id=usuario_id,
+            fecha=fecha_obj,
+            peso=float(peso),
+            estado_animo=body.get("estado_animo", "Neutral"),
+            nivel_energia=int(body.get("nivel_energia", 5)),
+            ejercicio_minutos=int(body.get("ejercicio_minutos", 0)),
+            notas=body.get("notas", "")
+        )
 
-    return jsonify({"msg": "Register created"}), 201
+        db.session.add(nuevo_registro)
+        db.session.flush()  # Flush nos da el ID del registro antes del commit para los síntomas
+
+        nuevos_sintomas = Sintomas(
+            registro_id=nuevo_registro.id,
+            nauseas=body.get("nauseas", False),
+            fatiga=body.get("fatiga", False),
+            dolor_espalda=body.get("dolor_espalda", False),
+            hinchazon=body.get("hinchazon", False)
+        )
+        db.session.add(nuevos_sintomas)
+
+        db.session.commit()
+        return jsonify({"message": "Registro diario guardado con éxito", "id": nuevo_registro.id}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")
+        return jsonify({"error": "Server error", "details": str(e)}), 500
 
 
 # OBTENER REGISTROS
+
 
 @api.route('/registro-diario/<int:user_id>', methods=['GET'])
 def obtener_registros(user_id):
@@ -723,91 +742,50 @@ def info_bebe(user_id):
     }), 200
 
 
-# *******DASHBOARD*********
+# *******DASHBOARD  (HAY QUE VOLVER A CAMBIAR PARA QUE SE CONECTE CON LA API)*********
 
 @api.route('/dashboard/<int:user_id>', methods=['GET'])
-def dashboard(user_id):
+def get_dashboard(user_id):
+    try:
+        embarazo = Embarazo.query.filter_by(usuario_id=user_id).first()
+        if not embarazo:
+            return jsonify({"error": "No se encontró un embarazo para este usuario"}), 404
 
-    embarazo = db.session.execute(
-        select(Embarazo).where(Embarazo.usuario_id == user_id)
-    ).scalar_one_or_none()
+        semana_actual = 1  # Valor por defecto
+        try:
+            lmp = embarazo.fecha_ultima_menstruacion.isoformat()
+            url = "https://pregnancy-calculator-api.p.rapidapi.com/pregnancy-week"
+            headers = {
+                "x-rapidapi-host": "pregnancy-calculator-api.p.rapidapi.com",
+                "x-rapidapi-key": os.getenv("RAPIDAPI_KEY")
+            }
+            response = requests.get(url, headers=headers, params={"lmp": lmp})
+            if response.status_code == 200:
+                semana_actual = response.json().get("week", 1)
+        except Exception as e:
+            print(f"Error llamando a RapidAPI: {e}")
 
-    if embarazo is None:
-        return jsonify({"error": "Pregnancy not found"}), 404
+        info_bebe = TamanioBebe.query.filter_by(semana=semana_actual).first()
+        fruta = info_bebe.fruta if info_bebe else "Semilla"
+        tamano_cm = info_bebe.tamano_cm if info_bebe else 0.5
 
-    registros = db.session.execute(
-        select(RegistroDiario)
-        .where(RegistroDiario.usuario_id == user_id)
-        .order_by(RegistroDiario.fecha.desc())
-    ).scalars().all()
+        registros_db = RegistroDiario.query.filter_by(
+            usuario_id=user_id).order_by(RegistroDiario.fecha.asc()).all()
+        registros_serializados = [r.serialize() for r in registros_db]
 
-    ultimo_registro = registros[0] if registros else None
+        return jsonify({
+            "bebe": {
+                "semana": semana_actual,
+                "fruta": fruta,
+                "tamano_cm": tamano_cm
+            },
+            "registros": registros_serializados,
+            "total_registros": len(registros_serializados),
+            "ultimo_peso": registros_serializados[-1]["peso"] if registros_serializados else None
+        }), 200
 
-    lmp = embarazo.fecha_ultima_menstruacion.isoformat()
-
-    url = "https://pregnancy-calculator-api.p.rapidapi.com/pregnancy-week"
-
-    headers = {
-        "x-rapidapi-host": "pregnancy-calculator-api.p.rapidapi.com",
-        "x-rapidapi-key": os.getenv("RAPIDAPI_KEY")
-    }
-
-    params = {
-        "lmp": lmp
-    }
-
-    response = requests.get(url, headers=headers, params=params)
-
-    semana = None
-
-    if response.status_code == 200:
-        semana = response.json().get("week")
-
-    fruta = None
-    tamano_cm = None
-
-    if semana:
-
-        tamano = db.session.execute(
-            select(TamanioBebe).where(TamanioBebe.semana == semana)
-        ).scalar_one_or_none()
-
-        if tamano:
-            fruta = tamano.fruta
-            tamano_cm = tamano.tamano_cm
-
-    sintomas = None
-
-    if ultimo_registro:
-
-        sintomas_obj = db.session.execute(
-            select(Sintomas).where(Sintomas.registro_id == ultimo_registro.id)
-        ).scalar_one_or_none()
-
-        if sintomas_obj:
-            sintomas = sintomas_obj.serialize()
-
-    return jsonify({
-
-        "embarazo": {
-            "lmp": embarazo.fecha_ultima_menstruacion,
-            "due_date": embarazo.fecha_parto_estimada,
-            "numero_bebes": embarazo.numero_bebes
-        },
-
-        "bebe": {
-            "semana": semana,
-            "fruta": fruta,
-            "tamano_cm": tamano_cm
-        },
-
-        "ultimo_registro": ultimo_registro.serialize() if ultimo_registro else None,
-
-        "sintomas": sintomas,
-
-        "total_registros": len(registros)
-
-    }), 200
+    except Exception as e:
+        return jsonify({"error": "Error interno", "details": str(e)}), 500
 
 # ****PESO RECOMENDADO DURANTE EMBARAZO*******
 
@@ -874,6 +852,7 @@ def peso_recomendado(user_id):
     return jsonify(response.json()), 200
 
 
+
 # **********Grafica Comparativa Pesos *****************
 
 @api.route('/grafica-peso-comparado/<int:user_id>', methods=['GET'])
@@ -901,21 +880,24 @@ def grafica_peso_comparado(user_id):
 
     return send_file(grafica, mimetype="image/png")
 
+
+# **********Contacto*****************
+
 @api.route('/contact', methods=['POST'])
 def create_contact():
     data = request.get_json()
     email = data.get("email")
     description = data.get("description")
-    
+
     if not email or not description:
         return jsonify({"error": "Email and description are required"}), 400
 
     new_contact = Contact(
-        email=email, 
+        email=email,
         description=description
     )
-    
+
     db.session.add(new_contact)
     db.session.commit()
-    
+
     return jsonify({"msg": "Contact message sent successfully"}), 200

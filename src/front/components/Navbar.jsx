@@ -40,7 +40,7 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Servicios" onClick={() => setMenuOpen(false)}>Servicios</Link>
+							<Link className="nav-link custom-link" to="/servicios" onClick={() => setMenuOpen(false)}>Servicios</Link>
 						</li>
 
 						<li className="nav-item">
@@ -48,13 +48,17 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
+							<Link className="nav-link custom-link" to="/dashboard" onClick={() => setMenuOpen(false)}>
+								Dashboard
+							</Link>
+						</li>
+
+						<li className="nav-item">
+							<Link className="nav-link custom-link" to="/blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
 						</li>
 
 						<li className="nav-item nav-button">
-							<Link className="custom-btn" to="/Login" onClick={() => setMenuOpen(false)}>
-								Login
-							</Link>
+							<Link className="custom-btn" to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
 						</li>
 
 					</ul>

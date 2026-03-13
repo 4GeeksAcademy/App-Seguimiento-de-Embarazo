@@ -1,95 +1,83 @@
-export const createUser = async (user, navigate) => {
+// services/backendServices.js
+
+export const LoginUser = async (userData, navigate) => {
   try {
+    // Usamos la URL de tu variable de entorno
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/register`,  
+      `${import.meta.env.VITE_BACKEND_URL}/api/login`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(user),
-      }
-    );
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      console.error("Error al crear usuario:", data.error);
-      alert(data.error || "Error al crear usuario");  
-      return;
-    }
-    
-    console.log("Usuario creado exitosamente:", data);
-    alert("Usuario creado exitosamente. Ahora puedes iniciar sesión.");
-    navigate("/login");  
-    
-  } catch (error) {
-    console.error("Error de red:", error);
-    alert("Error al conectar con el servidor");
-  }
-};
-
-export const LoginUser = async (user, navigate) => {
-  const response = await fetch(
-    `${import.meta.env.VITE_BACKEND_URL}/api/login`,  
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+        body: JSON.stringify(userData),
       },
-      body: JSON.stringify(user),
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Guardamos sesión
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Redirigimos al Dashboard como pide tu Login.jsx
+      navigate("/dashboard");
+      return data;
+    } else {
+      // Esto lo captura el 'catch' de tu Login.jsx para mostrar el error
+      throw new Error(data.error || "Invalid credentials");
     }
-  );
-  
-  const data = await response.json();
-  
-  if (!response.ok) {
-    if (response.status === 400) {
-      alert("Email or password invalid");
-      return;
-    }
+  } catch (error) {
+    console.error("Error en LoginUser:", error);
+    throw error; // Re-lanzamos para que el componente Login lo maneje
   }
-  
-  if (data.token) {
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-  }
-  
-  alert("Login successful!");
-  navigate("/registroEmbarazo");
 };
 
+export const createUser = async (userData, navigate) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      },
+    );
 
-export const sendContactMessage = async (contactData, navigate) => {
+    const data = await response.json();
+
+    if (response.ok) {
+      // Tras registrarse, lo mandamos a loguearse
+      navigate("/login");
+      return data;
+    } else {
+      alert(data.error || "Error al crear la cuenta");
+    }
+  } catch (error) {
+    console.error("Error en createUser:", error);
+  }
+};
+
+export const sendContactMessage = async (contactData) => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/contact`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(contactData),
-      }
+      },
     );
-    
+
     const data = await response.json();
-    
-    if (!response.ok) {
-      alert(data.error || "Error al enviar el mensaje");
-      return false;
-    }
-    
-    alert("¡Mensaje enviado con éxito! Te responderemos a la brevedad.");
-    
-    if (navigate) {
-      navigate("/");
-    }
-    
+    if (!response.ok) throw new Error(data.error || "Error al enviar");
+
     return true;
-    
   } catch (error) {
-    alert("Error al conectar con el servidor");
+    console.error("Error en contacto:", error);
     return false;
   }
 };

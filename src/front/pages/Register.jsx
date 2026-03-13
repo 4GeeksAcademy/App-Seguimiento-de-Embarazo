@@ -8,8 +8,9 @@ export const Register = () => {
     const navigate = useNavigate()
     const [user, setUser] = useState({
         email: "",
-        password: ""
-
+        password: "",
+        nombre: "",
+        apellido: ""
     })
 
 
@@ -38,7 +39,7 @@ export const Register = () => {
                                 <i className="fas fa-user-plus fa-4x text-primary mb-3"></i>
                             </div>
 
-                          
+
                             <h3>Create a user</h3>
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
@@ -51,7 +52,7 @@ export const Register = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="password" className="form-label">Password</label>
-                                    <input type="text"
+                                    <input type="password"
                                         name="password"
                                         placeholder="Enter your password"
                                         className="form-control" value={user.password}
@@ -59,7 +60,7 @@ export const Register = () => {
                                 </div>
                                 <button type="submit" className="btn btn-primary w-100" >Create a user</button>
                             </form>
-                            
+
 
                         </div>
                     </div>

@@ -224,3 +224,29 @@
     }
 }
 
+
+
+/* ===================================
+   DASHBOARD
+   =================================== */
+
+.dashboard-bg{
+    background: linear-gradient(135deg,#f6e8ff,#dbeafe);
+    min-height: 100vh;
+    padding:20px;
+}
+
+.dashboard-card{
+    backdrop-filter: blur(8px);
+    background: rgba(255,255,255,0.85);
+    border-radius:20px;
+}
+
+.dashboard-header {
+    font-weight: 600;
+}
+
+body {
+    background: linear-gradient(135deg,#f6e8ff,#dbeafe);
+}
+

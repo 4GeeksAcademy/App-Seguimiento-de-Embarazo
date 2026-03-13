@@ -24,6 +24,7 @@ flask-bcrypt = "*"
 requests = "*"
 reportlab = "*"
 matplotlib = "*"
+click = "*"
 
 [requires]
 python_version = "3.13"

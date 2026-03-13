@@ -52,7 +52,7 @@ export const Home = () => {
                         
                   <div className="home-mission-box">
                      <p className="text-white mb-0">
-                        💜 <strong>Nuestra misión:</strong> Creamos un espacio digital donde todo lo importante 
+                         <strong>Nuestra misión:</strong> Creamos un espacio digital donde todo lo importante 
                             está en un solo lugar. Desde calcular tu fecha de parto hasta registrar cómo te 
                             sientes cada día.
                         </p>
@@ -61,7 +61,7 @@ export const Home = () => {
                     
                     <div>
                         <Link to="/register" className="home-cta-button">
-                            ✨ Comenzar Ahora
+                             Comenzar Ahora
                         </Link>
                     </div>
                 </div>
