@@ -14,15 +14,15 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
 
-    nombre: Mapped[str] = mapped_column(String(100))
-    apellido: Mapped[str] = mapped_column(String(100))
+    nombre: Mapped[str] = mapped_column(String(100), nullable=True)
+    apellido: Mapped[str] = mapped_column(String(100), nullable=True)
 
-    altura: Mapped[float] = mapped_column(Float)
-    fecha_nacimiento: Mapped[Date] = mapped_column(Date)
+    altura: Mapped[float] = mapped_column(Float, nullable=True)
+    fecha_nacimiento: Mapped[Date] = mapped_column(Date, nullable=True)
 
     fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
 
-    activo: Mapped[bool] = mapped_column(Boolean, default=True)
+    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=True)
 
     embarazo = relationship("Embarazo", back_populates="usuario", uselist=False)
     registros = relationship("RegistroDiario", back_populates="usuario")
