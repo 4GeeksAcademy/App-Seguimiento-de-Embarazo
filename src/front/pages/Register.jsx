@@ -8,7 +8,9 @@ export const Register = () => {
     const navigate = useNavigate()
     const [user, setUser] = useState({
         email: "",
-        password: ""
+        password: "",
+        nombre: "",
+        apellido: ""
 
     })
 
@@ -51,10 +53,26 @@ export const Register = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="password" className="form-label">Password</label>
-                                    <input type="text"
+                                    <input type="password"
                                         name="password"
                                         placeholder="Enter your password"
                                         className="form-control" value={user.password}
+                                        onChange={handleChange} />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="nombre" className="form-label">Nombre</label>
+                                    <input type="text"
+                                        name="nombre"
+                                        placeholder="Tu nombre"
+                                        className="form-control" value={user.nombre}
+                                        onChange={handleChange} />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="apellido" className="form-label">Apellido</label>
+                                    <input type="text"
+                                        name="apellido"
+                                        placeholder="Tu apellido"
+                                        className="form-control" value={user.apellido}
                                         onChange={handleChange} />
                                 </div>
                                 <button type="submit" className="btn btn-primary w-100" >Create a user</button>
