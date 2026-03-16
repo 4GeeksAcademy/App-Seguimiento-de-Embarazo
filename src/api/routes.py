@@ -23,6 +23,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from flask import send_file
 from reportlab.pdfgen import canvas
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 
@@ -182,39 +183,35 @@ def login():
 # CREAR EMBARAZO
 
 @api.route('/embarazo', methods=['POST'])
+@jwt_required()
 def crear_embarazo():
 
     data = request.get_json()
 
-    usuario_id = data.get("usuario_id")
+    usuario_id = get_jwt_identity()
 
     try:
-        fecha_ultima_menstruacion = datetime.strptime(
-            data.get("fecha_ultima_menstruacion"), "%Y-%m-%d"
+        ultima_menstruacion = datetime.strptime(
+            data.get("ultima_menstruacion"), "%Y-%m-%d"
         ).date()
     except:
         return jsonify({"error": "Invalid fecha_ultima_menstruacion format"}), 400
 
-    fecha_parto_estimada = None
-    if data.get("fecha_parto_estimada"):
-        try:
-            fecha_parto_estimada = datetime.strptime(
-                data.get("fecha_parto_estimada"), "%Y-%m-%d"
-            ).date()
-        except:
-            return jsonify({"error": "Invalid fecha_parto_estimada format"}), 400
-
+    peso_inicial = data.get("peso_inicial")
+    longitud_ciclo = data.get("longitud_ciclo")
     numero_bebes = data.get("numero_bebes", 1)
-    doctor = data.get("doctor")
-    hospital = data.get("hospital")
+    altura = data.get("altura")
 
+   
+    
     nuevo_embarazo = Embarazo(
         usuario_id=usuario_id,
-        fecha_ultima_menstruacion=fecha_ultima_menstruacion,
-        fecha_parto_estimada=fecha_parto_estimada,
+        ultima_menstruacion=ultima_menstruacion,
+        peso_inicial=peso_inicial,
+        longitud_ciclo=longitud_ciclo,
         numero_bebes=numero_bebes,
-        doctor=doctor,
-        hospital=hospital
+        altura=altura,
+       
     )
 
     db.session.add(nuevo_embarazo)
@@ -944,3 +941,22 @@ def registroEmbarazo():
     db.session.commit()
 
     return jsonify({"msg": "Registro creado correctamente"}), 201
+
+@api.route('/contact', methods=['POST'])
+def create_contact():
+    data = request.get_json()
+    email = data.get("email")
+    description = data.get("description")
+    
+    if not email or not description:
+        return jsonify({"error": "Email and description are required"}), 400
+
+    new_contact = Contact(
+        email=email, 
+        description=description
+    )
+    
+    db.session.add(new_contact)
+    db.session.commit()
+    
+    return jsonify({"msg": "Contact message sent successfully"}), 200

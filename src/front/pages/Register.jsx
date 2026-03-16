@@ -53,7 +53,7 @@ export const Register = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="password" className="form-label">Password</label>
-                                    <input type="text"
+                                    <input type="password"
                                         name="password"
                                         placeholder="Enter your password"
                                         className="form-control" value={user.password}

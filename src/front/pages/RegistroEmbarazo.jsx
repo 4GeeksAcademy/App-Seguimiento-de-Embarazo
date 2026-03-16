@@ -7,7 +7,8 @@ export const RegistroEmbarazo = () => {
     const [formData, setFormData] = useState({
         ultima_menstruacion: "",
         peso_inicial: "",
-        longitud_ciclo: "28"
+        longitud_ciclo: "28",
+        numero_bebes: ""
     });
 
     const handleChange = (e) => {
@@ -21,17 +22,29 @@ export const RegistroEmbarazo = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
+        const payload = {
+           
+            ultima_menstruacion: formData.ultima_menstruacion,
+            peso_inicial: parseFloat(formData.peso_inicial),
+            longitud_ciclo: parseInt(formData.longitud_ciclo),
+            numero_bebes: parseInt(formData.numero_bebes || 1),
+            altura: parseInt(formData.altura),
+        };
         try {
+            const token = localStorage.getItem("token"); 
+
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/registroEmbarazo`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/embarazo`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        ...formData,
-                        peso_inicial: parseFloat(formData.peso_inicial),
-                        longitud_ciclo: parseInt(formData.longitud_ciclo)
-                    }),
+                    headers: {
+                         "Content-Type": "application/json",
+                          "Authorization": `Bearer ${token}`
+
+
+                    },
+                    body: JSON.stringify(payload),
                 }
             );
 
@@ -88,24 +101,7 @@ export const RegistroEmbarazo = () => {
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-4">
                                 <form onSubmit={handleSubmit}>
-                                    <div className="mb-4">
-                                        <label className="form-label fw-bold" style={{ color: "#6a4c93" }}>
-                                            <i className="fas fa-user me-2"></i>
-                                            Nombre
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="nombre"
-                                            className="form-control form-control-lg"
-                                            value={formData.nombre}
-                                            onChange={handleChange}
-                                            placeholder="Ingresa tu nombre"
-                                            required
-                                        />
-                                        <small className="form-text text-muted fst-italic">
-                                            Tu nombre completo
-                                        </small>
-                                    </div>
+
                                     <div className="mb-4">
                                         <label className="form-label fw-bold" style={{ color: "#6a4c93" }}>
                                             <i className="fas fa-calendar-alt me-2"></i>
@@ -186,7 +182,53 @@ export const RegistroEmbarazo = () => {
                                             Tiempo promedio entre periodos
                                         </small>
                                     </div>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-bold" style={{ color: "#6a4c93" }}>
+                                            <i className="fas fa-baby me-2"></i>
+                                            Número de Bebés
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="numero_bebes"
+                                            className="form-control form-control-lg"
+                                            value={formData.numero_bebes}
+                                            onChange={handleChange}
+                                            placeholder="1"
+                                            min="1"
+                                            max="5"
+                                            required
+                                        />
+                                        <small className="form-text text-muted fst-italic">
+                                            ¿Cuántos bebés esperas? (1, 2, 3...)
+                                        </small>
+                                    </div>
 
+                                    <div className="mb-4">
+                                        <label className="form-label fw-bold" style={{ color: "#6a4c93" }}>
+                                            <i className="fas fa-ruler-vertical me-2"></i>
+                                            Altura
+                                        </label>
+                                        <div className="input-group input-group-lg">
+                                            <input
+                                                type="number"
+                                                name="altura"
+                                                className="form-control"
+                                                value={formData.altura}
+                                                onChange={handleChange}
+                                                placeholder="165"
+                                                min="140"
+                                                max="220"
+                                                step="0.1"
+                                                required
+                                            />
+                                            <span className="input-group-text fw-bold bg-primary text-white">
+                                                cm
+                                            </span>
+                                        </div>
+                                        <small className="form-text text-muted fst-italic">
+                                            Tu estatura en centímetros
+                                        </small>
+                                    </div>
 
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
                                         <button

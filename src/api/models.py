@@ -14,6 +14,7 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 from sqlalchemy import ForeignKey
 from datetime import date, datetime
 from sqlalchemy import Column, Integer, String, Date
+from flask_jwt_extended import jwt_required, get_jwt_identity  
 
 
 
@@ -67,19 +68,30 @@ class Embarazo(db.Model):
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
 
-    fecha_parto_estimada: Mapped[Date] = mapped_column(Date)
-
-    primer_embarazo: Mapped[bool] = mapped_column(Boolean, default=True)
-
+   
+    ultima_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
+    peso_inicial: Mapped[float] = mapped_column(Float, nullable=False)
+    longitud_ciclo: Mapped[int] = mapped_column(nullable=False)
     numero_bebes: Mapped[int] = mapped_column(Integer, default=1)
+    altura: Mapped[float] = mapped_column(nullable=False)
 
-    doctor: Mapped[str] = mapped_column(String(150))
-    hospital: Mapped[str] = mapped_column(String(200))
-
-    activo: Mapped[bool] = mapped_column(Boolean, default=True)
 
     usuario = relationship("User", back_populates="embarazo")
-            # do not serialize the password, its a security breach
+           
+    def serialize(self):
+          return {
+            "id": self.id,
+            "usuario_id": self.usuario_id,
+            "ultima_menstruacion": self.ultima_menstruacion,
+            "peso_inicial": self.peso_inicial,
+            "longitud_ciclo": self.longitud_ciclo,
+            " numero_bebes": self.numero_bebes,
+            "altura": self.altura
+
+           
+           
+        }
+
         
     
 class RegistroEmbarazo(db.Model):
