@@ -13,6 +13,7 @@ import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
 import { Contact } from "./pages/Contact";
 import { RegistroEmbarazo } from "./pages/RegistroEmbarazo";
+import { Information } from "./pages/Information";
 
 
 export const router = createBrowserRouter(
@@ -33,7 +34,8 @@ export const router = createBrowserRouter(
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} /> 
-         <Route path="/registroEmbarazo" element={<RegistroEmbarazo />} />
+        <Route path="/registroEmbarazo" element={<RegistroEmbarazo />} />
+        <Route path="/informacion" element={<Information />} />
       </Route>
     )
 );

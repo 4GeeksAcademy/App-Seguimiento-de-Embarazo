@@ -36,7 +36,7 @@ class User(db.Model):
 
     fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
 
-    activo: Mapped[bool] = mapped_column(Boolean, default=True)
+    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=True)
 
     embarazo = relationship("Embarazo", back_populates="usuario", uselist=False)
     registros = relationship("RegistroDiario", back_populates="usuario")
