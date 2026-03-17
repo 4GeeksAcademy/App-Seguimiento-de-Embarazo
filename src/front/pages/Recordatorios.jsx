@@ -72,7 +72,7 @@ const Recordatorios = () => {
             <div className="row justify-content-center">
                 <div className="col-lg-6 col-md-8">
 
-                    {/* Header */}
+                    
                     <div className="text-center mb-4">
                         <h2 className="display-6 fw-bold text-primary mb-2">
                             <i className="fas fa-bell me-2"></i>
@@ -83,11 +83,11 @@ const Recordatorios = () => {
                         </p>
                     </div>
 
-                    {/* Card principal */}
+                  
                     <div className="card shadow border-0">
                         <div className="card-body p-4">
 
-                            {/* Input para nueva tarea */}
+                         
                             <div className="mb-4">
                                 <div className="input-group input-group-lg">
                                     <span className="input-group-text bg-primary text-white">
@@ -107,7 +107,7 @@ const Recordatorios = () => {
                                 </small>
                             </div>
 
-                            {/* Lista de tareas */}
+                           
                             <ul className="list-group">
                                 {todos.length === 0 ? (
                                     <div className="alert alert-light text-center" role="alert">
@@ -138,7 +138,7 @@ const Recordatorios = () => {
                                 )}
                             </ul>
 
-                            {/* Contador de tareas */}
+                           
                             {todos.length > 0 && (
                                 <div className="mt-3 text-center">
                                     <span className="badge bg-primary px-3 py-2">
