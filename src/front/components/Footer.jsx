@@ -99,6 +99,7 @@ export const Footer = () => {
           </div>
 
           <div className="col-12 col-md-3">
+            
             <div className="text-center text-md-start">
               <h6 className="fw-bold mb-2">Noticias Médicas</h6>
               <nav className="d-flex flex-column align-items-center align-items-md-start">
