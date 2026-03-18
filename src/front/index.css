@@ -1,0 +1,226 @@
+
+/* ===================================
+   CONTENEDOR PRINCIPAL
+   =================================== */
+
+.home-container {
+    display: flex;
+    min-height: 550px;
+       max-width: 1200px;
+       margin: 0 auto;     
+    border: 3px solid #d4a5ff;
+    border-radius: 1.5rem;
+    padding: 3rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #fdfbfb 0%, #f8f5ff 100%);
+}
+
+/* ===================================
+   COLUMNA IZQUIERDA
+   =================================== */
+
+.home-left-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-right: 3rem;
+}
+
+.home-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #6a4c93;
+    margin-bottom: 1.5rem;
+}
+
+.home-description {
+    line-height: 1.8;
+    font-size: 16px;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.home-mission-box {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.home-mission-box p {
+    font-size: 15px;
+}
+
+/* ===================================
+   BOTÓN CTA
+   =================================== */
+
+.home-cta-button {
+    display: inline-block;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #594bd8 0%, #532bb1 100%);
+    transition: all 0.3s ease;
+}
+
+.home-cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* ===================================
+   COLUMNA DERECHA - CONTENEDOR FIGURAS
+   =================================== */
+
+.home-shapes-container {
+    height: 100%;
+    padding: 1.5rem;
+    border: 3px solid #a8d5ba;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+}
+
+.home-shapes-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+}
+
+/* ===================================
+   CÍRCULOS
+   =================================== */
+
+.home-circle {
+    width: 140px;
+    height: 140px;
+    border: 3px solid;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.home-circle-top {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.home-circle-bottom {
+    border-color: #fdcb6e;
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+}
+
+/* ===================================
+   ROMBO
+   =================================== */
+
+.home-diamond {
+    width: 140px;
+    height: 140px;
+    border: 3px solid #ff9a9e;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.home-diamond-content {
+    transform: rotate(-45deg);
+}
+
+.home-emoji {
+    font-size: 5rem;
+}
+
+/* ===================================
+   ICONOS
+   =================================== */
+
+.home-icon-primary {
+    color: #667eea;
+}
+
+.home-icon-warning {
+    color: #d63031;
+}
+
+/* ===================================
+   ETIQUETAS
+   =================================== */
+
+.home-label {
+    position: absolute;
+    bottom: -10px;
+    background-color: white;
+    border-radius: 50px;
+    padding: 0.25rem 0.75rem;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home-label-primary {
+    color: #667eea;
+     bottom: -10px;
+}
+
+.home-label-secondary {
+    color: #ff9a9e;
+    bottom: -35px;
+    transform: rotate(-45deg);
+}
+
+.home-label-warning {
+    color: #d63031;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+@media (max-width: 768px) {
+    .home-container {
+        flex-direction: column;
+        padding: 2rem;
+    }
+    
+    .home-left-column {
+        padding-right: 0;
+        margin-bottom: 2rem;
+    }
+    
+    .home-title {
+        font-size: 2rem;
+    }
+    
+    .home-circle,
+    .home-diamond {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .home-emoji {
+        font-size: 3.5rem;
+    }
+    
+    .home-cta-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
