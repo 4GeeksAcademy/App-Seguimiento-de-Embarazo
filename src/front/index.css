@@ -224,3 +224,75 @@
     }
 }
 
+/* ===================================
+   MODO OSCURO PRUEBA 2
+   =================================== */
+
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .navbar {
+  background-color: #2d2d2d !important;
+}
+
+body.dark-mode .navbar .nav-link {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navbar .nav-link:hover {
+  color: #4a4a4a !important;
+}
+
+body.dark-mode .custom-btn {
+  background-color: #4a4a4a;
+  color: white;
+  border-color: #666;
+}
+
+body.dark-mode .custom-btn:hover {
+  background-color: #5a5a5a;
+}
+
+body.dark-mode footer {
+  background-color: #2d2d2d !important;
+  color: #ffffff;
+}
+
+
+body.dark-mode .card {
+  background-color: #2d2d2d;
+  border-color: #444;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: #333;
+  color: #fff;
+  border-color: #555;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #aaa;
+}
+
+body.dark-mode .navbar.scrolled {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+body.dark-mode p a {
+    color: #fff;
+    font-weight: 500; 
+}
+
+body.dark-mode p a:hover {
+    color: #fff;
+}

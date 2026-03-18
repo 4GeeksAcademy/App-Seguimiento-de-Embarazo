@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ThemeToggle from './themeToggle';
 import "../styles/navbar.css";
 
 export const Navbar = () => {
@@ -40,7 +41,7 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Servicios" onClick={() => setMenuOpen(false)}>Servicios</Link>
+							<Link className="nav-link custom-link" to="/informacion" onClick={() => setMenuOpen(false)}>Información</Link>
 						</li>
 
 						<li className="nav-item">
@@ -50,7 +51,9 @@ export const Navbar = () => {
 						<li className="nav-item">
 							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
 						</li>
-
+						<li className="nav-item theme-toggle-item">
+							<ThemeToggle />
+						</li>
 						<li className="nav-item nav-button">
 							<Link className="custom-btn" to="/Login" onClick={() => setMenuOpen(false)}>
 								Login
