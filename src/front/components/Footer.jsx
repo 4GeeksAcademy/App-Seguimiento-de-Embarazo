@@ -106,7 +106,7 @@ export const Footer = () => {
                 <a href="/noticias" className="text-dark text-decoration-none mb-1">
                   Noticias Sobre el Parto
                 </a>
-                <a href="/noticiasEmbarazo" className="text-dark text-decoration-none mb-1">
+                <a href="/noticiasEm" className="text-dark text-decoration-none mb-1">
                   Noticias Sobre el Embarazo
                 </a>
                 <a href="/avances" className="text-dark text-decoration-none mb-1">
