@@ -28,11 +28,11 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    nombre: Mapped[str] = mapped_column(String(100), nullable=True)
-    apellido: Mapped[str] = mapped_column(String(100), nullable=True)
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    apellido: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    altura: Mapped[float] = mapped_column(Float, nullable=True)
-    fecha_nacimiento: Mapped[Date] = mapped_column(Date, nullable=True)
+    altura: Mapped[float] = mapped_column(Float,nullable=True)
+    fecha_nacimiento: Mapped[Date] = mapped_column(Date,nullable=True)
 
     fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
 
