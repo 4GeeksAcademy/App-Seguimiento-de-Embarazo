@@ -3,12 +3,20 @@ import { Link } from "react-router-dom";
 export const Navbar = () => {
 
 	return (
+<<<<<<< HEAD
 		<nav className="navbar navbar-light bg-light">
 			<div className="container">
 				<Link to="/">
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link>
 
+=======
+		<nav className={`navbar navbar-expand-lg bg-white fixed-top ${scrolled ? "scrolled" : ""}`}>
+			<div className="container navbar-inner">
+
+				
+				<img src="/docs/assets/logo.png" width="70" alt="logo" />
+>>>>>>> 671ad98 (rama Develop restaurada)
 				<button
 					className="navbar-toggler"
 					type="button"

@@ -4,9 +4,24 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask import request, jsonify, Blueprint
+<<<<<<< HEAD
 from api.models import db, User, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, TamanioBebe, Contact
+=======
+from api.models import db, User, Embarazo, RegistroDiario, Sintomas, ConsejoPorSemana, TamanioBebe, Contact, RegistroEmbarazo
+from flask import Flask, request, jsonify, url_for, Blueprint
+from api.models import db, User, RegistroEmbarazo
+from api.utils import generate_sitemap, APIException
+>>>>>>> 671ad98 (rama Develop restaurada)
 from flask_cors import CORS
 from sqlalchemy import select  
+
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from flask import send_file
+from reportlab.pdfgen import canvas
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+
 
 
 api = Blueprint('api', __name__)
@@ -83,39 +98,35 @@ def login():
 # CREAR EMBARAZO
 
 @api.route('/embarazo', methods=['POST'])
+@jwt_required()
 def crear_embarazo():
 
     data = request.get_json()
 
-    usuario_id = data.get("usuario_id")
+    usuario_id = get_jwt_identity()
 
     try:
-        fecha_ultima_menstruacion = datetime.strptime(
-            data.get("fecha_ultima_menstruacion"), "%Y-%m-%d"
+        ultima_menstruacion = datetime.strptime(
+            data.get("ultima_menstruacion"), "%Y-%m-%d"
         ).date()
     except:
         return jsonify({"error": "Invalid fecha_ultima_menstruacion format"}), 400
 
-    fecha_parto_estimada = None
-    if data.get("fecha_parto_estimada"):
-        try:
-            fecha_parto_estimada = datetime.strptime(
-                data.get("fecha_parto_estimada"), "%Y-%m-%d"
-            ).date()
-        except:
-            return jsonify({"error": "Invalid fecha_parto_estimada format"}), 400
-
+    peso_inicial = data.get("peso_inicial")
+    longitud_ciclo = data.get("longitud_ciclo")
     numero_bebes = data.get("numero_bebes", 1)
-    doctor = data.get("doctor")
-    hospital = data.get("hospital")
+    altura = data.get("altura")
 
+   
+    
     nuevo_embarazo = Embarazo(
         usuario_id=usuario_id,
-        fecha_ultima_menstruacion=fecha_ultima_menstruacion,
-        fecha_parto_estimada=fecha_parto_estimada,
+        ultima_menstruacion=ultima_menstruacion,
+        peso_inicial=peso_inicial,
+        longitud_ciclo=longitud_ciclo,
         numero_bebes=numero_bebes,
-        doctor=doctor,
-        hospital=hospital
+        altura=altura,
+       
     )
 
     db.session.add(nuevo_embarazo)
@@ -158,7 +169,9 @@ def crear_registro_diario():
 
     try:
         fecha = datetime.strptime(
-            data.get("fecha"), "%Y-%m-%d"
+            data.get("fecha"), "%Y-%m-%d")
+        fecha_actual = datetime.strptime(
+            data.get("fecha_actual"), "%Y-%m-%d"
         ).date()
     except:
         return jsonify({"error": "Invalid fecha_actual"}), 400
@@ -166,6 +179,7 @@ def crear_registro_diario():
     nuevo_registro = RegistroDiario(
         usuario_id=usuario_id,
         fecha=fecha,
+        fecha_actual=fecha_actual,
         peso=data.get("peso"),
         estado_animo=data.get("estado_animo"),
         nivel_energia=data.get("nivel_energia"),
@@ -195,6 +209,8 @@ def obtener_registros(user_id):
 
         if registro.fecha:
             data["fecha"] = registro.fecha.isoformat()
+        if registro.fecha_actual:
+            data["fecha_actual"] = registro.fecha_actual.isoformat()
 
         resultado.append(data)
 
@@ -342,6 +358,8 @@ def historial_completo(user_id):
 
         if registro.fecha:
             registro_data["fecha"] = registro.fecha.isoformat()
+        if registro.fecha_actual:
+            registro_data["fecha_actual"] = registro.fecha_actual.isoformat()
 
         registro_data["sintomas"] = sintomas.serialize() if sintomas else None
 
@@ -356,8 +374,8 @@ def historial_completo(user_id):
             embarazo_data["fecha_ultima_menstruacion"] = embarazo.fecha_ultima_menstruacion.isoformat()
 
         if embarazo.fecha_parto_estimada:
-            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat(
-            )
+            embarazo_data["fecha_parto_estimada"] = embarazo.fecha_parto_estimada.isoformat()
+            
 
     return jsonify({
         "embarazo": embarazo_data,
@@ -386,6 +404,7 @@ def sintomas_por_usuario(user_id):
 
             resultado.append({
                 "fecha": registro.fecha.isoformat() if registro.fecha else None,
+                "fecha": registro.fecha_actual.isoformat() if registro.fecha_actual else None,
                 "sintomas": sintomas.serialize()
             })
 
@@ -811,7 +830,31 @@ def grafica_peso_comparado(user_id):
 
     return send_file(grafica, mimetype="image/png")
 
-# ********** CONTACTO *****************
+    
+
+@api.route('/registroEmbarazo', methods=['POST'])
+def registroEmbarazo():
+    data = request.get_json()
+
+    embarazo_id = data.get("embarazo_id")
+    ultima_menstruacion = data.get("ultima_menstruacion")
+    peso_inicial = data.get("peso_inicial")
+    longitud_ciclo = data.get("longitud_ciclo")
+
+    if not longitud_ciclo  or not ultima_menstruacion:
+        return jsonify({"error": "Datos incorretos"}), 400
+
+    registro_embarazo = RegistroEmbarazo(
+        embarazo_id=embarazo_id,
+        ultima_menstruacion=ultima_menstruacion,
+        peso_inicial=peso_inicial,
+        longitud_ciclo=longitud_ciclo
+    )
+
+    db.session.add(registro_embarazo)
+    db.session.commit()
+
+    return jsonify({"msg": "Registro creado correctamente"}), 201
 
 @api.route('/contact', methods=['POST'])
 def create_contact():

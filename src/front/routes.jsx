@@ -12,8 +12,13 @@ import { Demo } from "./pages/Demo";
 import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
 import { Contact } from "./pages/Contact";
+<<<<<<< HEAD
 import { RegistroEmbarazo } from "./pages/RegistroEmbarazo";
 import { Information } from "./pages/Information";
+=======
+import { Information } from "./pages/Information";
+import { RegistroEmbarazo } from "./pages/RegistroEmbarazo";
+>>>>>>> 671ad98 (rama Develop restaurada)
 import Recordatorios from "./pages/Recordatorios";
 import { Noticias } from "./pages/NoticiasParto";
 import { NoticiasEmbarazo } from "./pages/NoticiasEmbarazo";
@@ -39,9 +44,15 @@ export const router = createBrowserRouter(
         <Route path="/contact" element={<Contact />} /> 
         <Route path="/registroEmbarazo" element={<RegistroEmbarazo />} />
         <Route path="/informacion" element={<Information />} />
+<<<<<<< HEAD
         <Route path="/recordatorio" element={<Recordatorios />} />
         <Route path="/noticias" element={<Noticias />} />
         <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
+=======
+          <Route path="/recordatorio" element={<Recordatorios />} />
+        <Route path="/noticias" element={<Noticias />} />
+         <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
+>>>>>>> 671ad98 (rama Develop restaurada)
        
       </Route>
     )
