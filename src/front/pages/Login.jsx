@@ -40,7 +40,7 @@ export const Login = () => {
                     <div className="card shadow-lg border-0 rounded-4">
                         <div className="card-body p-5">
                             <div className="text-center mb-4">
-                                <i className="fas fa-sign-in-alt fa-4x text-success mb-3"></i>
+                                <i className="fas fa-sign-in-alt fa-4x text-primary mb-3"></i>
                             </div>
                             <h3 className="text-center mb-4">Log in</h3>
                             {error && (
@@ -81,7 +81,7 @@ export const Login = () => {
                                     />
                                 </div>
 
-                                <button type="submit" className="btn btn-success w-100 mb-3">
+                                <button type="submit" className="btn btn-primary w-100 mb-3">
                                     <i className="fas fa-sign-in-alt me-2"></i>Log in
                                 </button>
                             </form>
