@@ -15,7 +15,7 @@ export const Noticias = () => {
                 </p>
             </div>
 
-            {/* Sección 1: Preparación para el parto */}
+          
             <div className="row mb-5 align-items-center">
                 <div className="col-md-6">
                     <img 
@@ -41,7 +41,7 @@ export const Noticias = () => {
                 </div>
             </div>
 
-            {/* Sección 2: Tipos de parto */}
+            
             <div className="row mb-5 align-items-center flex-row-reverse">
                 <div className="col-md-6">
                     <img 
@@ -68,7 +68,7 @@ export const Noticias = () => {
                 </div>
             </div>
 
-            {/* Sección 3: Qué llevar al hospital */}
+            
             <div className="row mb-5 align-items-center">
                 <div className="col-md-6">
                     <img 
@@ -110,7 +110,7 @@ export const Noticias = () => {
                 </div>
             </div>
 
-            {/* Sección 4: Postparto */}
+            
             <div className="row mb-5 align-items-center flex-row-reverse">
                 <div className="col-md-6">
                     <img 
@@ -137,7 +137,7 @@ export const Noticias = () => {
             </div>
 
             
-            {/* Call to action */}
+            
             <div className="text-center mt-5">
                 <button
                     className="btn btn-primary btn-lg px-5 py-3 rounded-pill"
