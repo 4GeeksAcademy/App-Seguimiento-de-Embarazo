@@ -21,7 +21,7 @@ export const createUser = async (user, navigate) => {
     
     console.log("Usuario creado exitosamente:", data);
     alert("Usuario creado exitosamente. Ahora puedes iniciar sesión.");
-    navigate("/");  
+    navigate("/login");  
     
   } catch (error) {
     console.error("Error de red:", error);
