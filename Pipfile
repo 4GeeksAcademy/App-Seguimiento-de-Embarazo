@@ -21,18 +21,9 @@ wtforms = "==3.1.2"
 sqlalchemy = "*"
 reportlab = "*"
 matplotlib = "*"
-<<<<<<< HEAD
 requests = "*"
 flask-cors = "*"
 flask-bcrypt = "*"
-flask-bcrypt = "*"
-reportlab = "*"
-matplotlib = "*"
-=======
-flask-cors = "*"
-flask-bcrypt = "*"
->>>>>>> parent of c6ec3b4 (Revert "Avances")
-requests = "*"
 
 [requires]
 python_version = "3.13"
