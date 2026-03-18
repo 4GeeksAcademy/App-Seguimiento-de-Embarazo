@@ -10,6 +10,14 @@ import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import { Register } from "./pages/Register";
+import { Login } from "./pages/Login";
+import { Contact } from "./pages/Contact";
+import { RegistroEmbarazo } from "./pages/RegistroEmbarazo";
+import { Information } from "./pages/Information";
+import Recordatorios from "./pages/Recordatorios";
+import { Noticias } from "./pages/NoticiasParto";
+import { NoticiasEmbarazo } from "./pages/NoticiasEmbarazo";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -27,6 +35,14 @@ export const router = createBrowserRouter(
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} /> 
+        <Route path="/registroEmbarazo" element={<RegistroEmbarazo />} />
+        <Route path="/informacion" element={<Information />} />
+          <Route path="/recordatorio" element={<Recordatorios />} />
+        <Route path="/noticias" element={<Noticias />} />
+         <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
+       
       </Route>
     )
 );
