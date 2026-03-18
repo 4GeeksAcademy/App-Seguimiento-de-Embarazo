@@ -20,10 +20,8 @@ export const Navbar = () => {
 		<nav className={`navbar navbar-expand-lg bg-white fixed-top ${scrolled ? "scrolled" : ""}`}>
 			<div className="container navbar-inner">
 
-				<Link className="navbar-brand" to="/">
-					Logo
-				</Link>
-
+				
+				<img src="/docs/assets/logo.png" width="70" alt="logo" />
 				<button
 					className="navbar-toggler"
 					type="button"

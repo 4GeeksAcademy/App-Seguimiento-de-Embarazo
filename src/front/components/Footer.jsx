@@ -99,13 +99,14 @@ export const Footer = () => {
           </div>
 
           <div className="col-12 col-md-3">
+            
             <div className="text-center text-md-start">
               <h6 className="fw-bold mb-2">Noticias Médicas</h6>
               <nav className="d-flex flex-column align-items-center align-items-md-start">
-                <a href="/noticiasPartos" className="text-dark text-decoration-none mb-1">
+                <a href="/noticias" className="text-dark text-decoration-none mb-1">
                   Noticias Sobre el Parto
                 </a>
-                <a href="/noticiasEmbarazo" className="text-dark text-decoration-none mb-1">
+                <a href="/noticiasEm" className="text-dark text-decoration-none mb-1">
                   Noticias Sobre el Embarazo
                 </a>
                 <a href="/avances" className="text-dark text-decoration-none mb-1">
