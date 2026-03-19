@@ -19,20 +19,22 @@ class User(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     apellido: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    altura: Mapped[float] = mapped_column(Float,nullable=True)
-    fecha_nacimiento: Mapped[Date] = mapped_column(Date,nullable=True)
+    altura: Mapped[float] = mapped_column(Float, nullable=True)
+    fecha_nacimiento: Mapped[Date] = mapped_column(Date, nullable=True)
 
     fecha_registro: Mapped[Date] = mapped_column(Date, default=date.today)
 
     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=True)
 
-    embarazo = relationship("Embarazo", back_populates="usuario", uselist=False)
+    embarazo = relationship(
+        "Embarazo", back_populates="usuario", uselist=False)
     registros = relationship("RegistroDiario", back_populates="usuario")
     recordatorios = relationship("Recordatorio", back_populates="usuario")
 
@@ -61,42 +63,36 @@ class Embarazo(db.Model):
 
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-
     ultima_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
+    fecha_parto_estimada: Mapped[Date] = mapped_column(Date, nullable=True)
     peso_inicial: Mapped[float] = mapped_column(Float, nullable=False)
     longitud_ciclo: Mapped[int] = mapped_column(Integer, nullable=False)
     numero_bebes: Mapped[int] = mapped_column(Integer, default=1)
     altura: Mapped[float] = mapped_column(Float, nullable=False)
 
-
     usuario = relationship("User", back_populates="embarazo")
-           
+
     def serialize(self):
-          return {
+        return {
             "id": self.id,
             "usuario_id": self.usuario_id,
-            "ultima_menstruacion": self.ultima_menstruacion,
+            "ultima_menstruacion": self.ultima_menstruacion.isoformat() if self.ultima_menstruacion else None,
+            "fecha_parto_estimada": self.fecha_parto_estimada.isoformat() if self.fecha_parto_estimada else None,
             "peso_inicial": self.peso_inicial,
             "longitud_ciclo": self.longitud_ciclo,
             " numero_bebes": self.numero_bebes,
             "altura": self.altura
 
-           
-           
         }
 
-        
-    
+
 class RegistroEmbarazo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     embarazo_id: Mapped[int] = mapped_column(ForeignKey("embarazo.id"))
-    
 
-   
     ultima_menstruacion: Mapped[datetime] = mapped_column(Date, nullable=False)
     peso_inicial: Mapped[float] = mapped_column(Float, nullable=False)
     longitud_ciclo: Mapped[int] = mapped_column(nullable=False)
-
 
     def serialize(self):
         return {
@@ -105,68 +101,75 @@ class RegistroEmbarazo(db.Model):
             "ultima_menstruacion": self.ultima_menstruacion,
             "peso_inicial": self.peso_inicial,
             "longitud_ciclo": self.longitud_ciclo,
-           
-           
+
+
         }
 
 
 class RegistroDiario(db.Model):
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-
     fecha: Mapped[Date] = mapped_column(Date)
-
-    peso: Mapped[float] = mapped_column(Float)
-
+    peso: Mapped[float] = mapped_column(Float, nullable=True)
     estado_animo: Mapped[str] = mapped_column(String(50))
 
-    nivel_energia: Mapped[int] = mapped_column(Integer)
+    vasos_agua: Mapped[int] = mapped_column(Integer, default=0)
+    patadas_bebe: Mapped[int] = mapped_column(Integer, default=0)
+    horas_sueno: Mapped[float] = mapped_column(Float, default=8.0)
+    ejercicio_minutos: Mapped[int] = mapped_column(Integer, default=0)
 
-    ejercicio_minutos: Mapped[int] = mapped_column(Integer)
-
-    notas: Mapped[str] = mapped_column(Text)
-
-    fecha_creacion: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
+    nivel_energia: Mapped[int] = mapped_column(
+        Integer, nullable=True)  # Lo mantenemos por si acaso
+    notas: Mapped[str] = mapped_column(Text, nullable=True)
+    fecha_creacion: Mapped[DateTime] = mapped_column(
+        DateTime, default=datetime.utcnow)
 
     usuario = relationship("User", back_populates="registros")
-
-    sintomas = relationship("Sintomas", back_populates="registro", cascade="all, delete")
+    sintomas = relationship("Sintomas", back_populates="registro",
+                            cascade="all, delete", uselist=False)  # uselist=False para 1 a 1
 
     def serialize(self):
         return {
             "id": self.id,
-            "usuario_id": self.usuario_id,
-            "fecha": self.fecha,
+            "fecha": self.fecha.isoformat(),
             "peso": self.peso,
             "estado_animo": self.estado_animo,
-            "nivel_energia": self.nivel_energia,
+            "vasos_agua": self.vasos_agua,
+            "patadas_bebe": self.patadas_bebe,
+            "horas_sueno": self.horas_sueno,
             "ejercicio_minutos": self.ejercicio_minutos,
-            "notas": self.notas
+            "notas": self.notas,
+            "sintomas": self.sintomas.serialize() if self.sintomas else None
         }
 
 
 class Sintomas(db.Model):
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
     registro_id: Mapped[int] = mapped_column(ForeignKey("registro_diario.id"))
 
-    nauseas: Mapped[bool] = mapped_column(Boolean)
-    fatiga: Mapped[bool] = mapped_column(Boolean)
-    dolor_espalda: Mapped[bool] = mapped_column(Boolean)
-    hinchazon: Mapped[bool] = mapped_column(Boolean)
+    nauseas: Mapped[bool] = mapped_column(Boolean, default=False)
+    fatiga: Mapped[bool] = mapped_column(Boolean, default=False)
+    dolor_espalda: Mapped[bool] = mapped_column(Boolean, default=False)
+    hinchazon: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # NUEVOS SÍNTOMAS PEDIDOS
+    acidez: Mapped[bool] = mapped_column(Boolean, default=False)
+    insomnio: Mapped[bool] = mapped_column(Boolean, default=False)
+    calambres: Mapped[bool] = mapped_column(Boolean, default=False)
+    antojos: Mapped[bool] = mapped_column(Boolean, default=False)
 
     registro = relationship("RegistroDiario", back_populates="sintomas")
 
     def serialize(self):
         return {
-            "id": self.id,
             "nauseas": self.nauseas,
             "fatiga": self.fatiga,
             "dolor_espalda": self.dolor_espalda,
-            "hinchazon": self.hinchazon
+            "hinchazon": self.hinchazon,
+            "acidez": self.acidez,
+            "insomnio": self.insomnio,
+            "calambres": self.calambres,
+            "antojos": self.antojos
         }
 
 
@@ -214,7 +217,6 @@ class Recordatorio(db.Model):
         }
 
 
-
 class TamanioBebe(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -231,13 +233,15 @@ class TamanioBebe(db.Model):
             "fruta": self.fruta,
             "tamano_cm": self.tamano_cm
         }
-    
+
+
 class Contact(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
-    created_at: Mapped[str] = mapped_column(db.DateTime, server_default=db.func.now())
-  
+    created_at: Mapped[str] = mapped_column(
+        db.DateTime, server_default=db.func.now())
+
     def serialize(self):
         return {
             "id": self.id,
@@ -251,21 +255,21 @@ class Contact(db.Model):
         }
 
 
-
 class Informe(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
     usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
-    fecha_generacion: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)
+    fecha_generacion: Mapped[DateTime] = mapped_column(
+        DateTime, default=datetime.utcnow)
 
     tipo_informe: Mapped[str] = mapped_column(String(50))
 
     datos_json: Mapped[str] = mapped_column(Text)
 
     url_pdf: Mapped[str] = mapped_column(String(500))
-    
+
     def serialize(self):
         return {
             "id": self.id,
@@ -275,13 +279,3 @@ class Informe(db.Model):
             "datos_json": self.datos_json,
             "url_pdf": self.url_pdf
         }
-
-
-
-
-        
-
-    
-
-
-

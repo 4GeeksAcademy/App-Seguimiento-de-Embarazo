@@ -23,7 +23,16 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await LoginUser(user, navigate);
+            // MEJORA: Capturamos la respuesta de la función para decidir el destino
+            const data = await LoginUser(user);
+
+            // Si el login es exitoso y el backend confirma que ya tiene embarazo registrado:
+            if (data && data.tiene_embarazo) {
+                navigate("/dashboard");
+            } else {
+                // Si es un usuario nuevo o sin datos de embarazo:
+                navigate("/registroEmbarazo");
+            }
         } catch (error) {
             setError("Invalid mail or password");
         }
@@ -55,11 +64,11 @@ export const Login = () => {
                                     <label htmlFor="email" className="form-label">
                                         <i className="fas fa-envelope me-2"></i>Email
                                     </label>
-                                    <input 
+                                    <input
                                         type="email"
                                         name="email"
                                         placeholder="Ingresa tu email"
-                                        className="form-control" 
+                                        className="form-control"
                                         value={user.email}
                                         onChange={handleChange}
                                         required
@@ -70,11 +79,11 @@ export const Login = () => {
                                     <label htmlFor="password" className="form-label">
                                         <i className="fas fa-lock me-2"></i>Password
                                     </label>
-                                    <input 
+                                    <input
                                         type="password"
                                         name="password"
                                         placeholder="Enter your password"
-                                        className="form-control" 
+                                        className="form-control"
                                         value={user.password}
                                         onChange={handleChange}
                                         required
@@ -88,7 +97,7 @@ export const Login = () => {
 
                             <div className="text-center mt-3">
                                 <p className="text-muted mb-2">¿No tienes una cuenta?</p>
-                                <button 
+                                <button
                                     onClick={handleRegisterClick}
                                     className="btn btn-outline-primary w-100">
                                     <i className="fas fa-user-plus me-2"></i>Regístrate aquí

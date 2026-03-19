@@ -30,9 +30,8 @@ export const createUser = async (user, navigate) => {
 };
 
 
-
-
-export const LoginUser = async (user, navigate) => {
+// MEJORA EN LOGIN: Ahora retorna la 'data' para que el componente Login decida la ruta
+export const LoginUser = async (user) => {
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/api/login`,  
     {
@@ -47,31 +46,29 @@ export const LoginUser = async (user, navigate) => {
   const data = await response.json();
   
   if (!response.ok) {
-    if (response.status === 400) {
-      alert("Email or password invalid");
-      return;
-    }
+    throw new Error(data.error || "Invalid mail or password");
   }
   
   if (data.token) {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    alert("Login successful!");
+    return data; // <--- ESTO ES VITAL para que el if(data.tiene_embarazo) funcione
   }
-  
-  alert("Login successful!");
-  navigate("/registroEmbarazo");
 };
 
 
-
+// MEJORA EN REGISTRO EMBARAZO: Añadido el Token JWT (si no, el backend te dará 401 Unauthorized)
 export const createRegistroEmbarazo = async (registro, navigate) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/registroEmbarazo`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/registro-embarazo`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // <--- Necesario para @jwt_required()
         },
         body: JSON.stringify(registro),
       }
@@ -88,8 +85,8 @@ export const createRegistroEmbarazo = async (registro, navigate) => {
     console.log("Registro de embarazo creado:", data);
     alert("Registro de embarazo creado correctamente");
 
-      if (navigate) {
-      navigate("/panelPersonal");  
+    if (navigate) {
+      navigate("/dashboard"); // <--- Cambiado a dashboard como pediste
     }
 
   } catch (error) {
