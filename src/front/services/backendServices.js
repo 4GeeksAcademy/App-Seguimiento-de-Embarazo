@@ -132,3 +132,89 @@ export const sendContactMessage = async (contactData, navigate) => {
     return false;
   }
 };
+
+
+export const fetchNoticiasSalud = async () => {
+  try {
+    const proxyUrl = 'https://corsproxy.io/?';
+    const targetUrl = 'https://www.cuidadodesalud.gov/api/index.json';
+    
+    const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+    
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    const palabrasClave = [
+      'embarazo', 'pregnancy', 'materno', 'maternal', 'prenatal','bebé', 'baby', 'nacimiento', 'birth', 'parto', 'childbirth',
+      'lactancia', 'breastfeeding', 'recién nacido', 'newborn', 'obstetricia', 'obstetrics', 'gestación', 'gestation', 'fetal','postparto', 'postpartum'
+    ];
+    
+    const contenidoFiltrado = data.filter(item => {
+      const titulo = (item.title || '').toLowerCase();
+      const tituloEs = (item['es-title'] || '').toLowerCase();
+      const bite = (item.bite || '').toLowerCase();
+      
+      return palabrasClave.some(palabra => 
+        titulo.includes(palabra) || 
+        tituloEs.includes(palabra) || 
+        bite.includes(palabra)
+      );
+    });
+    
+    const imagenesEmbarazo = [
+      {
+        tema: "Ecografía",
+        url: "https://images.pexels.com/photos/1556652/pexels-photo-1556652.jpeg"
+      },
+      {
+        tema: "Embarazo",
+        url: "https://www.babyfresh.co/cdn/shop/articles/Como-conectar-con-tu-bebe-durante-el-embarazo_e3a8ea7a-bf43-464c-ac01-63e496c1ca58.jpg?v=1765291713"
+      },
+      {
+        tema: "Doctores",
+        url: "https://cdn.prod.website-files.com/66bd394eedeb9d6ee29898c6/682f5450a046c241920c1e6f_Three%20doctors%20standing%20side%20by%20side%2C%20crossing%20their%20arms.jpg"
+      },
+      {
+        tema: "Control médico",
+        url: "https://images.pexels.com/photos/4173251/pexels-photo-4173251.jpeg"
+      },
+      {
+        tema: "Bebé recién nacido",
+        url: "https://mcpress.mayoclinic.org/uploads/2022/08/NewbornScreeningxGettyImagesx583992212-1120x640.jpg"
+      },
+    ];
+    
+    const noticiasFormateadas = contenidoFiltrado.slice(0, 9).map((item, index) => {
+      const titulo = item['es-title'] || item.title || 'Título no disponible';
+      
+      return {
+        id: index,
+        titulo: titulo,
+        descripcion: item.bite || item['es-bite'] || 'Contenido educativo sobre salud materna',
+        imagen: imagenesEmbarazo[index % imagenesEmbarazo.length].url,
+        fecha: new Date().toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        urlOriginal: item.url ? `https://www.cuidadodesalud.gov${item.url}` : null
+      };
+    });
+    
+    console.log(`Se encontraron ${contenidoFiltrado.length} noticias, mostrando ${noticiasFormateadas.length}`);
+    
+    return { success: true, data: noticiasFormateadas };
+    
+  } catch (error) {
+    console.error("Error:", error);
+    
+    return { 
+      success: false, 
+      error: error.message,
+      data: datosRespaldo
+    };
+  }
+};
