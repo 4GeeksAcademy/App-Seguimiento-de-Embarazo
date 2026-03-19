@@ -174,26 +174,43 @@ def get_dashboard():
     semana_actual = max(1, min((dias_transcurridos // 7) + 1, 42))
     dias_restantes = max(0, (embarazo.fecha_parto_estimada - hoy).days)
 
-    # 2. Frutas
-    frutas_dict = {1: "Semilla 🌱", 4: "Amapola 📍", 8: "Frambuesa 🍓", 12: "Lima 🍋", 16: "Aguacate 🥑",
-                   20: "Plátano 🍌", 25: "Berenjena 🍆", 30: "Pepino 🥒", 35: "Coco 🥥", 40: "Sandía 🍉"}
-    ref = max([s for s in frutas_dict.keys() if s <= semana_actual] or [1])
+    # 2. Lógica del Bebé (Usando tu modelo TamanioBebe)
+    # Buscamos en la DB el registro de la semana actual o el más cercano anterior
+    info_bebe = TamanioBebe.query.filter(
+        TamanioBebe.semana <= semana_actual).order_by(TamanioBebe.semana.desc()).first()
+
+    bebe_data = {
+        "tamanio": info_bebe.fruta if info_bebe else "Creciendo",
+        # Valor por defecto si no hay DB
+        "tamano_cm": info_bebe.tamano_cm if info_bebe else 0.2
+    }
 
     # 3. Registros y Gráficas
     imc, consejo = obtener_datos_salud(embarazo.peso_inicial, embarazo.altura)
     registros = RegistroDiario.query.filter_by(
         usuario_id=user_id).order_by(RegistroDiario.fecha.asc()).all()
 
-    frecuencia_sintomas = {"nauseas": 0, "fatiga": 0,
-                           "dolor_espalda": 0, "hinchazon": 0}
     chart_labels = ["Inicial"]
     chart_data = [embarazo.peso_inicial]
+
+    # --- CÁLCULO DE PESO IDEAL (Para que el botón funcione) ---
+    # Una guía estándar: 0.5kg/semana tras el primer trimestre
+    ideal_data = [embarazo.peso_inicial]
+    for i in range(1, len(registros) + 1):
+        # Estimación simple de ganancia ideal progresiva
+        semana_reg = semana_actual  # Simplificado para el ejemplo
+        ganancia_ideal = 0 if semana_reg < 12 else (semana_reg - 12) * 0.4
+        ideal_data.append(round(embarazo.peso_inicial + ganancia_ideal, 1))
+
+    frecuencia_sintomas = {"nauseas": 0, "fatiga": 0,
+                           "dolor_espalda": 0, "hinchazon": 0}
 
     for r in registros:
         if r.peso:
             chart_labels.append(r.fecha.strftime("%d/%m"))
             chart_data.append(r.peso)
         if r.sintomas:
+            # Asumiendo que r.sintomas es un objeto con atributos booleanos
             for s in frecuencia_sintomas.keys():
                 if getattr(r.sintomas, s, False):
                     frecuencia_sintomas[s] += 1
@@ -205,12 +222,7 @@ def get_dashboard():
         "semana_actual": semana_actual,
         "dias_restantes": dias_restantes,
         "mensaje": MENSAJES_SEMANALES.get(semana_actual, "Disfruta cada segundo de este viaje."),
-        "bebe": {"tamanio": frutas_dict[ref]},
-        "detalles": {
-            "ultima_menstruacion": embarazo.ultima_menstruacion.isoformat(),
-            "peso_inicial": embarazo.peso_inicial,
-            "altura": embarazo.altura
-        },
+        "bebe": bebe_data,  # Ahora incluye tamano_cm
         "salud": {
             "imc_inicial": imc,
             "consejo": consejo,
@@ -218,7 +230,11 @@ def get_dashboard():
             "fpp": embarazo.fecha_parto_estimada.strftime("%d %b, %Y")
         },
         "progreso": max(0, min(round((dias_transcurridos / 280) * 100), 100)),
-        "chart_config": {"labels": chart_labels, "data": chart_data},
+        "chart_config": {
+            "labels": chart_labels,
+            "data": chart_data,
+            "ideal_data": ideal_data  # <--- ESTO activa el botón en el Frontend
+        },
         "frecuencia_sintomas": frecuencia_sintomas
     }), 200
 

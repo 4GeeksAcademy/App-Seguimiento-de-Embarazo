@@ -230,8 +230,8 @@ class TamanioBebe(db.Model):
     def serialize(self):
         return {
             "semana": self.semana,
-            "fruta": self.fruta,
-            "tamano_cm": self.tamano_cm
+            "tamanio": self.fruta, 
+            "cm": self.tamano_cm  
         }
 
 
