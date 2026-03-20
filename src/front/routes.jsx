@@ -18,6 +18,8 @@ import { Noticias } from "./pages/NoticiasParto";
 import { NoticiasEmbarazo } from "./pages/NoticiasEmbarazo";
 import { AvancesMedicos } from "./pages/AvancesMedicos";
 import { Dashboard } from "./pages/Dashboard";
+import { BlogDeNoticias } from "./pages/BlogDeNoticias";
+
 
 // 1. IMPORTAMOS LA FUNCIÓN INJECTCONTEXT
 import injectContext from "./appContext";
@@ -44,6 +46,7 @@ export const router = createBrowserRouter(
       <Route path="/noticias" element={<Noticias />} />
       <Route path="/noticiasEm" element={<NoticiasEmbarazo />} />
       <Route path="/avances" element={<AvancesMedicos />} />
+      <Route path="/blog" element={<BlogDeNoticias />} />
     </Route>
   )
 );
