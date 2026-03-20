@@ -1,10 +1,10 @@
-import { useState, useContext } from "react"; // 1. Importamos useContext
+import { useState, useContext } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { LoginUser } from "../services/backendServices.js";
 import { Context } from "../appContext";
 
 export const Login = () => {
-    const { actions } = useContext(Context); // 3. Traemos las actions del estado global
+    const { actions } = useContext(Context); 
     const navigate = useNavigate();
     const [user, setUser] = useState({
         email: "",
@@ -24,15 +24,10 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Capturamos la respuesta de la función
             const data = await LoginUser(user);
 
             if (data && data.token) {
-                // 4. VITAL: Actualizamos el estado global para que la Navbar reaccione
-                // (Asegúrate de que esta acción exista en tu appContext)
                 actions.setToken(data.token);
-
-                // Decidimos la ruta basada en si tiene o no embarazo registrado:
                 if (data.tiene_embarazo) {
                     navigate("/dashboard");
                 } else {

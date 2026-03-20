@@ -93,7 +93,6 @@ export const Dashboard = () => {
         } catch (error) { alert("Error al conectar"); }
     };
 
-    // RESTAURADO: Función original para el informe PDF completo
     const descargarPDF = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/exportar-pdf`, {
@@ -120,7 +119,6 @@ export const Dashboard = () => {
 
                 <div className="motivational-hero">
                     <div className="top-buttons">
-                        {/* RESTAURADO: Botón original con icono de PDF y texto de reporte */}
                         <button className="btn-glass" onClick={descargarPDF}>
                             <i className="fas fa-file-pdf me-2"></i> Reporte PDF
                         </button>

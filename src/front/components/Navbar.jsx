@@ -17,11 +17,10 @@ export const Navbar = () => {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	// Función para cerrar sesión
 	const handleLogout = () => {
-		actions.logout(); // Llama a la función de tu store.js
+		actions.logout(); 
 		setMenuOpen(false);
-		navigate("/"); // Redirige al inicio
+		navigate("/"); 
 	};
 
 	return (
@@ -54,24 +53,17 @@ export const Navbar = () => {
 						<li className="nav-item">
 							<Link className="nav-link custom-link" to="/contact" onClick={() => setMenuOpen(false)}>Contacto</Link>
 						</li>
-
-						{/* LÓGICA DINÁMICA: BLOG O PANEL PERSONAL */}
 						<li className="nav-item">
-							{!store.token ? (
-								<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>
-									Blog de Noticias
-								</Link>
-							) : (
+							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
+						</li>
+
+						<li className="nav-item">
+							{store.token && (
 								<Link className="nav-link custom-link" to="/dashboard" onClick={() => setMenuOpen(false)}>
 									Panel Personal
 								</Link>
 							)}
 						</li>
-						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
-						</li>
-
-						{/* LÓGICA DINÁMICA: LOGIN O LOG OUT */}
 						<li className="nav-item nav-button">
 							{!store.token ? (
 								<Link className="custom-btn" to="/Login" onClick={() => setMenuOpen(false)}>

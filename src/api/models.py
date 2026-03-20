@@ -20,12 +20,11 @@ class User(db.Model):
     fecha_registro: Mapped[date] = mapped_column(Date, default=date.today)
     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=True)
 
-    # Relaciones
     embarazo = relationship(
         "Embarazo", back_populates="usuario", uselist=False)
     registros = relationship("RegistroDiario", back_populates="usuario")
     recordatorios = relationship("Recordatorio", back_populates="usuario")
-    informes = relationship("Informe", back_populates="usuario")  # Agregada
+    informes = relationship("Informe", back_populates="usuario")
 
     @property
     def semana_actual(self):
@@ -34,7 +33,7 @@ class User(db.Model):
             hoy = date.today()
             dias_transcurridos = (hoy - self.embarazo.ultima_menstruacion).days
             semana = (dias_transcurridos // 7) + 1
-            return max(1, min(semana, 42))  # Limita entre semana 1 y 42
+            return max(1, min(semana, 42))
         return None
 
     def set_password(self, password):
@@ -50,8 +49,8 @@ class User(db.Model):
             "nombre": self.nombre,
             "apellido": self.apellido,
             "activo": self.activo,
-            "semana_actual": self.semana_actual,  # <-- Añadido
-            "tiene_embarazo": self.embarazo is not None  # <-- Añadido
+            "semana_actual": self.semana_actual,
+            "tiene_embarazo": self.embarazo is not None
         }
 
 

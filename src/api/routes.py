@@ -16,7 +16,6 @@ from api.models import db, User, Embarazo, RegistroDiario, Sintomas, Contact, Ta
 api = Blueprint('api', __name__)
 CORS(api)
 
-# --- DICCIONARIO DE MENSAJES MOTIVACIONALES ---
 MENSAJES_SEMANALES = {
     1: "Todo comienza con un pequeño sueño. ¡Bienvenida a esta aventura!",
     2: "Tu cuerpo está preparando el hogar más dulce del mundo.",
@@ -59,8 +58,6 @@ MENSAJES_SEMANALES = {
     39: "Respira profundo. Estás a punto de vivir el día más feliz.",
     40: "¡Llegó la hora! El amor más puro está por nacer. ¡Tú puedes!"
 }
-
-# --- LÓGICA DE SALUD E IMC ---
 
 
 def calcular_curva_ideal(peso_inicial, altura_cm):
@@ -107,7 +104,6 @@ def obtener_datos_salud(peso_inicial, altura):
     except:
         return 0, "Datos de altura/peso incompletos."
 
-# --- AUTH ---
 
 
 @api.route('/register', methods=['POST'])
@@ -177,13 +173,11 @@ def get_dashboard():
     if not embarazo:
         return jsonify({"embarazo_configurado": False}), 200
 
-    # 1. Tiempos
     hoy = date.today()
     dias_transcurridos = (hoy - embarazo.ultima_menstruacion).days
     semana_actual = max(1, min((dias_transcurridos // 7) + 1, 40))
     dias_restantes = max(0, (embarazo.fecha_parto_estimada - hoy).days)
 
-    # 2. Lógica del Bebé
     info_bebe = TamanioBebe.query.filter_by(semana=semana_actual).first()
     respaldo_bebe = {
         4: {"fruta": "una semilla de amapola", "icono": "🌱", "cm": 0.1, "g": 0.1},
@@ -201,7 +195,6 @@ def get_dashboard():
         bebe_data = {"tamanio": res["fruta"], "icono": res["icono"],
                      "tamano_cm": res["cm"], "peso_g": res["g"]}
 
-    # 3. Gráficas de Peso Sincronizadas
     registros = RegistroDiario.query.filter_by(
         usuario_id=user_id).order_by(RegistroDiario.fecha.asc()).all()
     curva_ideal_completa = calcular_curva_ideal(
@@ -209,13 +202,12 @@ def get_dashboard():
     chart_labels = [f"Sem {i}" for i in range(41)]
 
     data_reales = [None] * 41
-    data_reales[0] = embarazo.peso_inicial  # El peso inicial es la semana 0
+    data_reales[0] = embarazo.peso_inicial
     for r in registros:
         sem_reg = (r.fecha - embarazo.ultima_menstruacion).days // 7
         if 0 <= sem_reg <= 40:
             data_reales[sem_reg] = r.peso
 
-    # 4. Síntomas e IMC
     frecuencia_sintomas = {s: 0 for s in [
         "nauseas", "fatiga", "dolor_espalda", "hinchazon", "acidez", "insomnio", "calambres", "antojos"]}
     for r in registros:
@@ -316,45 +308,44 @@ def exportar_pdf():
     
     registros = RegistroDiario.query.filter_by(usuario_id=user_id).order_by(RegistroDiario.fecha.desc()).all()
     hoy = date.today()
-    
-    # Cálculos dinámicos basados en tu documento
-    semana_actual = max(1, min(((hoy - embarazo.ultima_menstruacion).days // 7) + 1, 42)) # [cite: 5]
-    imc_inicial, nota_medica = obtener_datos_salud(embarazo.peso_inicial, embarazo.altura) # 
-    ultimo_peso = registros[0].peso if registros else embarazo.peso_inicial # [cite: 15]
-    ganancia_total = round(ultimo_peso - embarazo.peso_inicial, 1) # 
+
+    semana_actual = max(1, min(((hoy - embarazo.ultima_menstruacion).days // 7) + 1, 42))
+    imc_inicial, nota_medica = obtener_datos_salud(embarazo.peso_inicial, embarazo.altura)  
+    ultimo_peso = registros[0].peso if registros else embarazo.peso_inicial 
+    ganancia_total = round(ultimo_peso - embarazo.peso_inicial, 1) 
 
     pdf = FPDF()
     pdf.add_page()
     
     # --- ENCABEZADO ---
     pdf.set_font("Arial", 'B', 16)
-    pdf.set_text_color(99, 102, 241) # Color azul del PDF original
-    pdf.cell(190, 10, txt="INFORME MÉDICO DE SEGUIMIENTO", ln=True, align='C') # [cite: 1]
+    pdf.set_text_color(99, 102, 241)
+    pdf.cell(190, 10, txt="INFORME MÉDICO DE SEGUIMIENTO", ln=True, align='C')
     
     pdf.set_font("Arial", size=10)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(190, 10, txt=f"Generado el: {hoy.strftime('%d/%m/%Y')}", ln=True, align='R') # [cite: 2]
+    pdf.cell(190, 10, txt=f"Generado el: {hoy.strftime('%d/%m/%Y')}", ln=True, align='R')
     pdf.ln(5)
 
-    # --- 1. RESUMEN DEL EMBARAZO --- [cite: 3]
+    # --- 1. RESUMEN DEL EMBARAZO --- 
     pdf.set_fill_color(240, 240, 240)
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(190, 8, " 1. RESUMEN DEL EMBARAZO", ln=True, fill=True)
     pdf.set_font("Arial", size=10)
     pdf.ln(2)
-    pdf.cell(95, 7, f"Paciente: {user.nombre} {user.apellido}") # [cite: 4]
-    pdf.cell(95, 7, f"F.U.M: {embarazo.ultima_menstruacion.strftime('%d/%m/%Y')}", ln=True) # [cite: 4]
-    pdf.cell(95, 7, f"Semana de Gestación: {semana_actual}") # [cite: 5]
-    pdf.cell(95, 7, f"F.P.P (Estimada): {embarazo.fecha_parto_estimada.strftime('%d/%m/%Y')}", ln=True) # [cite: 6]
+    pdf.cell(95, 7, f"Paciente: {user.nombre} {user.apellido}") 
+    pdf.cell(95, 7, f"F.U.M: {embarazo.ultima_menstruacion.strftime('%d/%m/%Y')}", ln=True) 
+    pdf.cell(95, 7, f"Semana de Gestación: {semana_actual}") 
+    pdf.cell(95, 7, f"F.P.P (Estimada): {embarazo.fecha_parto_estimada.strftime('%d/%m/%Y')}", ln=True) 
     pdf.ln(5)
 
-    # --- 2. CONTROL BIOMÉTRICO --- [cite: 7]
+    # --- 2. CONTROL BIOMÉTRICO --- 
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(190, 8, " 2. CONTROL BIOMÉTRICO", ln=True, fill=True)
     pdf.set_font("Arial", size=10)
     pdf.ln(2)
-    pdf.cell(63, 7, f"Peso Inicial: {embarazo.peso_inicial} kg") # [cite: 8]
-    pdf.cell(63, 7, f"Peso Actual: {ultimo_peso} kg") # [cite: 15]
+    pdf.cell(63, 7, f"Peso Inicial: {embarazo.peso_inicial} kg") 
+    pdf.cell(63, 7, f"Peso Actual: {ultimo_peso} kg")
     
     # Destacar la ganancia de peso
     pdf.set_font("Arial", 'B', 10)
@@ -363,7 +354,7 @@ def exportar_pdf():
     pdf.set_font("Arial", size=10)
     pdf.cell(63, 7, f"IMC Inicial: {imc_inicial}") # 
     pdf.set_font("Arial", 'I', 10)
-    pdf.cell(127, 7, f"Nota médica: {nota_medica}", ln=True) # [cite: 10]
+    pdf.cell(127, 7, f"Nota médica: {nota_medica}", ln=True) 
     pdf.ln(5)
 
     # --- 3. SÍNTOMAS MÁS RECURRENTES --- 
@@ -377,18 +368,16 @@ def exportar_pdf():
     pdf.cell(190, 8, " 3. SÍNTOMAS MÁS RECURRENTES", ln=True, fill=True)
     pdf.set_font("Arial", size=10)
     pdf.ln(2)
-    # Mostramos los síntomas que tienen al menos 1 registro [cite: 12, 13, 14]
     for s, count in frecuencia.items():
         if count > 0:
             pdf.cell(190, 6, f"- {s.replace('_', ' ').capitalize()}: Detectado en {count} registros.", ln=True)
     pdf.ln(5)
 
-    # --- 4. HISTORIAL DETALLADO --- [cite: 17]
+    # --- 4. HISTORIAL DETALLADO --- 
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(190, 8, " 4. HISTORIAL DETALLADO", ln=True, fill=True)
     pdf.ln(2)
     
-    # Cabecera de la Tabla 
     pdf.set_fill_color(99, 102, 241)
     pdf.set_text_color(255, 255, 255)
     pdf.cell(25, 8, "Fecha", 1, 0, 'C', True)
@@ -398,11 +387,9 @@ def exportar_pdf():
     pdf.cell(15, 8, "Mov.", 1, 0, 'C', True)
     pdf.cell(95, 8, "Ánimo y Notas", 1, 1, 'C', True)
 
-    # Filas de la Tabla 
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", size=9)
     for r in registros:
-        # Combinamos el ánimo y las notas para que se vea como el documento 
         info_extra = f"[{r.estado_animo}] {r.notas or ''}"
         
         pdf.cell(25, 7, r.fecha.strftime('%d/%m/%y'), 1, 0, 'C') # 
@@ -412,7 +399,6 @@ def exportar_pdf():
         pdf.cell(15, 7, f"{r.patadas_bebe}", 1, 0, 'C') # 
         pdf.cell(95, 7, info_extra[:50], 1, 1, 'L') # 
 
-    # Renderizado final
     pdf_content = pdf.output(dest='S').encode('latin-1', 'replace')
     return send_file(io.BytesIO(pdf_content), mimetype='application/pdf', as_attachment=True, download_name=f"Seguimiento_{user.nombre}.pdf")
 
@@ -1085,7 +1071,7 @@ def grafica_peso_comparado(user_id):
 
     peso_inicial = registros[0].peso
 
-    peso_recomendado = peso_inicial + 12  # estimación promedio embarazo
+    peso_recomendado = peso_inicial + 12
 
     grafica = generar_grafica_peso_comparado(registros, peso_recomendado)
 

@@ -29,28 +29,7 @@ export const Footer = () => {
                           }}>
                           Español
                         </button>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => {
-                            setIdiomaSeleccionado('English');
-                            setDropdownAbierto(false);
-                          }}>
-
-                          English
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => {
-                            setIdiomaSeleccionado('Português');
-                            setDropdownAbierto(false);
-                          }}>
-                          Português
-                        </button>
-                      </li>
+                      </li> 
                     </ul>
                   )}
                 </div>

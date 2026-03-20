@@ -28,7 +28,6 @@ export const createUser = async (user, navigate) => {
   }
 };
 
-// MEJORA EN LOGIN: Ahora retorna la 'data' para que el componente Login decida la ruta
 export const LoginUser = async (user) => {
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/api/login`,
@@ -51,11 +50,10 @@ export const LoginUser = async (user) => {
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
     alert("Login successful!");
-    return data; // <--- ESTO ES VITAL para que el if(data.tiene_embarazo) funcione
+    return data;
   }
 };
 
-// MEJORA EN REGISTRO EMBARAZO: Añadido el Token JWT (si no, el backend te dará 401 Unauthorized)
 export const createRegistroEmbarazo = async (registro, navigate) => {
   try {
     const token = localStorage.getItem("token");
@@ -65,7 +63,7 @@ export const createRegistroEmbarazo = async (registro, navigate) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // <--- Necesario para @jwt_required()
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(registro),
       },
@@ -83,7 +81,7 @@ export const createRegistroEmbarazo = async (registro, navigate) => {
     alert("Registro de embarazo creado correctamente");
 
     if (navigate) {
-      navigate("/dashboard"); // <--- Cambiado a dashboard como pediste
+      navigate("/dashboard");
     }
   } catch (error) {
     console.error("Error de red:", error);

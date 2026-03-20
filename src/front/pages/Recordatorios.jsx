@@ -8,7 +8,6 @@ const Recordatorios = () => {
     const [todos, setTodos] = useState([]);
     const [inputValue, setInputValue] = useState("");
 
-    // Obtener usuario o crearlo
     const getUser = async () => {
         const response = await fetch(`${API_URL}/users/${USER}`);
 
@@ -21,7 +20,6 @@ const Recordatorios = () => {
         setTodos(data.todos || []);
     };
 
-    // Crear usuario
     const createUser = async () => {
         await fetch(`${API_URL}/users/${USER}`, {
             method: "POST",
@@ -29,7 +27,6 @@ const Recordatorios = () => {
         setTodos([]);
     };
 
-    // Agregar tarea
     const agregarTarea = async (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
             const nuevaTarea = {
@@ -48,14 +45,12 @@ const Recordatorios = () => {
         }
     };
 
-    // Cargar tareas
     const cargarTareas = async () => {
         const response = await fetch(`${API_URL}/users/${USER}`);
         const data = await response.json();
         setTodos(data.todos || []);
     };
 
-    // Eliminar tarea
     const eliminarTarea = async (todoId) => {
         await fetch(`${API_URL}/todos/${todoId}`, {
             method: "DELETE",
@@ -83,11 +78,9 @@ const Recordatorios = () => {
                         </p>
                     </div>
 
-                    {/* Card principal */}
                     <div className="card shadow border-0">
                         <div className="card-body p-4">
 
-                            {/* Input para nueva tarea */}
                             <div className="mb-4">
                                 <div className="input-group input-group-lg">
                                     <span className="input-group-text bg-primary text-white">
@@ -106,7 +99,6 @@ const Recordatorios = () => {
                                 </small>
                             </div>
 
-                            {/* Lista de tareas */}
                             <ul className="list-group">
                                 {todos.length === 0 ? (
                                     <div className="alert alert-light text-center" role="alert">
@@ -137,7 +129,6 @@ const Recordatorios = () => {
                                 )}
                             </ul>
 
-                            {/* Contador de tareas */}
                             {todos.length > 0 && (
                                 <div className="mt-3 text-center">
                                     <span className="badge bg-primary px-3 py-2">
