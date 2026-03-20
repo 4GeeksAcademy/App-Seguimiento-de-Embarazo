@@ -38,7 +38,7 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Servicios" onClick={() => setMenuOpen(false)}>Servicios</Link>
+							<Link className="nav-link custom-link" to="/informacion" onClick={() => setMenuOpen(false)}>Información</Link>
 						</li>
 
 						<li className="nav-item">

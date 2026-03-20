@@ -61,7 +61,7 @@ export const Home = () => {
 
                     <div>
                         <Link to="/register" className="home-cta-button">
-                             ✨Comenzar Ahora
+                             🍼Comenzar Ahora
                         </Link>
                     </div>
                 </div>
