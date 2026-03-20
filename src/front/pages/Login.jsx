@@ -1,46 +1,52 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useContext } from "react"; // 1. Importamos useContext
+import { useNavigate } from "react-router-dom";
 import { LoginUser } from "../services/backendServices";
+import { Context } from "../appContext";
 
 export const Login = () => {
-
-    const navigate = useNavigate()
+    const { actions } = useContext(Context); // 3. Traemos las actions del estado global
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         email: "",
         password: ""
-    })
+    });
 
-    const [error, setError] = useState("")
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         setUser({
             ...user,
             [e.target.name]: e.target.value
-        })
-        setError("")
-    }
+        });
+        setError("");
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // MEJORA: Capturamos la respuesta de la función para decidir el destino
+            // Capturamos la respuesta de la función
             const data = await LoginUser(user);
 
-            // Si el login es exitoso y el backend confirma que ya tiene embarazo registrado:
-            if (data && data.tiene_embarazo) {
-                navigate("/dashboard");
-            } else {
-                // Si es un usuario nuevo o sin datos de embarazo:
-                navigate("/registroEmbarazo");
+            if (data && data.token) {
+                // 4. VITAL: Actualizamos el estado global para que la Navbar reaccione
+                // (Asegúrate de que esta acción exista en tu appContext)
+                actions.setToken(data.token);
+
+                // Decidimos la ruta basada en si tiene o no embarazo registrado:
+                if (data.tiene_embarazo) {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/registroEmbarazo");
+                }
             }
         } catch (error) {
             setError("Invalid mail or password");
         }
-    }
+    };
 
     const handleRegisterClick = () => {
         navigate("/register");
-    }
+    };
 
     return (
         <div className="container mt-2 mb-2">
@@ -109,5 +115,5 @@ export const Login = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
