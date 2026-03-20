@@ -8,12 +8,11 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler);
 
-// Definimos el estado inicial fuera para poder reutilizarlo en la limpieza
 const estadoInicialRegistro = {
     peso: "",
     estado_animo: "Feliz",
     horas_sueno: 8,
-    ejercicio_minutos: 0,
+    ejercicio_minutos: "",
     vasos_agua: 0,
     patadas_bebe: 0,
     notas: "",
@@ -22,6 +21,18 @@ const estadoInicialRegistro = {
         acidez: false, insomnio: false, calambres: false, antojos: false
     },
 };
+
+// Paleta de colores para la gráfica de síntomas
+const coloresSintomas = [
+    'rgba(255, 99, 132, 0.7)',   // Rosa
+    'rgba(54, 162, 235, 0.7)',   // Azul
+    'rgba(255, 206, 86, 0.7)',   // Amarillo
+    'rgba(75, 192, 192, 0.7)',   // Turquesa
+    'rgba(153, 102, 255, 0.7)',  // Morado
+    'rgba(255, 159, 64, 0.7)',   // Naranja
+    'rgba(199, 199, 199, 0.7)',  // Gris
+    'rgba(83, 102, 255, 0.7)'    // Indigo
+];
 
 export const Dashboard = () => {
     const navigate = useNavigate();
@@ -33,17 +44,20 @@ export const Dashboard = () => {
     const customStyles = `
         .dashboard-container { background-color: #f4f7fa; font-family: 'Quicksand', sans-serif; }
         .glass-card { background: #ffffff; border-radius: 30px; border: none; box-shadow: 12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff; }
-        .motivational-hero { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; border-radius: 35px; padding: 3.5rem 2rem; text-align: center; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.25); margin-bottom: 3rem; }
-        .fruit-icon { font-size: 5rem; display: block; margin-bottom: 10px; }
-        .progress-wrapper { position: relative; height: 20px; background: #edf2f7; border-radius: 50px; box-shadow: inset 2px 2px 5px #d1d9e6; margin-top: 35px; }
-        .progress-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, #6366f1, #a855f7); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
-        .progress-indicator { position: absolute; right: 0; top: -35px; background: #6366f1; color: white; padding: 3px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; transform: translateX(50%); box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
+        .motivational-hero { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; border-radius: 35px; padding: 2.5rem; text-align: center; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.25); margin-bottom: 2rem; position: relative; }
+        .fruit-icon { font-size: 6.5rem; display: block; margin-bottom: 5px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        .comparador-texto { font-size: 3.8rem; font-weight: 800; color: #2d3748; line-height: 1.1; }
+        .progress-wrapper { position: relative; height: 22px; background: #edf2f7; border-radius: 50px; box-shadow: inset 2px 2px 5px #d1d9e6; margin-top: 40px; }
+        .progress-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, #6366f1, #a855f7); transition: width 1.5s ease-in-out; position: relative; }
+        .progress-indicator { position: absolute; right: 0; top: -35px; background: #6366f1; color: white; padding: 3px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; transform: translateX(50%); }
         .premium-input { border-radius: 15px; background: #f0f4f8; border: none; box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff; padding: 12px 20px; font-weight: 600; }
-        .btn-round { width: 45px; height: 45px; border-radius: 50%; background: #f0f4f8; box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff; border: none; color: #6366f1; transition: 0.3s; }
-        .btn-round:active { box-shadow: inset 3px 3px 6px #d1d9e6; transform: scale(0.95); }
-        .btn-sintoma { border: none; border-radius: 15px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; transition: all 0.3s; background: #f0f4f8; box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff; color: #64748b; }
+        .btn-round { width: 45px; height: 45px; border-radius: 50%; background: #f0f4f8; box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff; border: none; color: #6366f1; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-round:active { transform: scale(0.9); box-shadow: inset 2px 2px 5px #d1d9e6; }
+        .btn-sintoma { border: none; border-radius: 15px; padding: 10px 18px; font-size: 0.85rem; font-weight: 600; background: #f0f4f8; box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff; color: #64748b; transition: 0.3s; }
         .btn-sintoma.active { background: #6366f1; color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2); }
-        .hover-scale:hover { transform: scale(1.02); }
+        .top-buttons { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .btn-glass { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 12px; padding: 8px 15px; font-weight: 600; transition: 0.3s; backdrop-filter: blur(5px); font-size: 0.9rem; }
+        .btn-glass:hover { background: white; color: #6366f1; }
     `;
 
     const fetchDashboardData = async () => {
@@ -63,18 +77,26 @@ export const Dashboard = () => {
 
     const handleGuardarDia = async (e) => {
         e.preventDefault();
+        const payload = {
+            ...registro,
+            peso: parseFloat(registro.peso),
+            horas_sueno: parseFloat(registro.horas_sueno) || 0,
+            ejercicio_minutos: parseInt(registro.ejercicio_minutos) || 0,
+            vasos_agua: parseInt(registro.vasos_agua) || 0,
+            patadas_bebe: parseInt(registro.patadas_bebe) || 0,
+        };
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/registro-diario`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
-                body: JSON.stringify(registro),
+                body: JSON.stringify(payload),
             });
             if (response.ok) {
                 await fetchDashboardData();
-                setRegistro(estadoInicialRegistro); // Limpiamos todo el form
+                setRegistro(estadoInicialRegistro);
                 alert("¡Registro guardado con éxito! ✨");
             }
-        } catch (error) { alert("Error al conectar con el servidor"); }
+        } catch (error) { alert("Error al conectar"); }
     };
 
     const descargarPDF = async () => {
@@ -86,29 +108,15 @@ export const Dashboard = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Seguimiento_Medico.pdf`;
+            link.download = `Seguimiento_Embarazo.pdf`;
             document.body.appendChild(link);
             link.click();
             link.remove();
-        } catch (error) { alert("No se pudo generar el PDF"); }
+        } catch (error) { alert("No se pudo generar el reporte PDF"); }
     };
 
-    if (loading) return <div className="vh-100 d-flex justify-content-center align-items-center"><div className="spinner-border text-primary" style={{ width: "3rem", height: "3rem" }}></div></div>;
-    if (!data) return <div className="p-5 text-center">No se pudo cargar la información.</div>;
-
-    const chartDatasets = [
-        {
-            label: "Peso Actual",
-            data: data.chart_config?.data || [],
-            borderColor: "#6366f1", backgroundColor: "rgba(99, 102, 241, 0.05)",
-            fill: true, tension: 0.4, borderWidth: 4, pointRadius: 5, pointBackgroundColor: "#fff"
-        },
-        ...(mostrarIdeal ? [{
-            label: "Peso Recomendado",
-            data: data.chart_config?.ideal_data || [],
-            borderColor: "#10b981", borderDash: [6, 4], fill: false, tension: 0.4, pointRadius: 0
-        }] : [])
-    ];
+    if (loading) return <div className="vh-100 d-flex justify-content-center align-items-center"><div className="spinner-border text-primary"></div></div>;
+    if (!data) return <div className="p-5 text-center">Error al cargar datos.</div>;
 
     return (
         <div className="container-fluid min-vh-100 py-5 dashboard-container">
@@ -116,25 +124,39 @@ export const Dashboard = () => {
             <div className="container" style={{ maxWidth: "1100px" }}>
 
                 <div className="motivational-hero">
-                    <h1 className="display-4 fw-bold mb-3">¡Hola, mamá!</h1>
-                    <p className="fs-3 fw-light opacity-90 italic">"{data.mensaje}"</p>
+                    <div className="top-buttons">
+                        <button className="btn-glass" onClick={descargarPDF}>
+                            <i className="fas fa-file-pdf me-2"></i> Reporte PDF
+                        </button>
+                        <button className="btn-glass" onClick={() => navigate("/recordatorios")}>
+                            <i className="fas fa-bell me-2"></i> Recordatorios
+                        </button>
+                    </div>
+                    <h1 className="display-4 fw-bold mb-2">¡Hola, mamá!</h1>
+                    <p className="fs-4 fw-light opacity-90 italic">"{data.mensaje}"</p>
                 </div>
 
+                {/* COMPARADOR DE TAMAÑO GIGANTE */}
                 <div className="glass-card p-5 mb-5 text-center">
-                    <div className="row justify-content-center">
-                        <div className="col-md-10">
-                            {/* ICONO DE FRUTA RESTAURADO */}
-                            <span className="fruit-icon">{data.bebe?.icono}</span>
-                            <span className="text-primary fw-bold text-uppercase ls-2 small d-block mb-2">Estado de tu embarazo</span>
-                            <h2 className="display-5 fw-bold text-dark mb-3">Semana {data.semana_actual}</h2>
-                            <div className="d-flex justify-content-center gap-4 mb-2">
-                                <span className="fs-5 text-muted"><i className="fas fa-expand-arrows-alt me-2"></i>Tamaño: <strong>{data.bebe?.tamanio}</strong></span>
-                                <span className="fs-5 text-muted"><i className="fas fa-ruler-vertical me-2"></i>Aprox: <strong>{data.bebe?.tamano_cm || '0.2'} cm</strong></span>
-                            </div>
+                    <div className="row justify-content-center align-items-center">
+                        <div className="col-md-4">
+                            <span className="fruit-icon">{data.bebe?.icono || "🌱"}</span>
+                        </div>
+                        <div className="col-md-8 text-md-start">
+                            <span className="text-primary fw-bold text-uppercase ls-2 small d-block mb-1">Tu bebé tiene el tamaño de:</span>
+                            <h2 className="comparador-texto mb-0 text-capitalize">{data.bebe?.tamanio || "una pequeña semilla"}</h2>
+                            <h3 className="display-6 text-muted fw-light mt-2">Semana {data.semana_actual}</h3>
+                        </div>
 
+                        <div className="col-md-10 mt-4">
+                            <div className="d-flex justify-content-center gap-5 border-top pt-4">
+                                <span className="fs-5 text-muted"><i className="fas fa-ruler-vertical me-2 text-info"></i>Longitud: <strong>{data.bebe?.tamano_cm || "--"} cm</strong></span>
+                                {/* CORRECCIÓN PESO BEBÉ: Se usa data.bebe.peso_g enviado por el backend */}
+                                <span className="fs-5 text-muted"><i className="fas fa-weight-hanging me-2 text-warning"></i>Peso aprox: <strong>{data.bebe?.peso_g || "--"} g</strong></span>
+                            </div>
                             <div className="progress-wrapper">
                                 <div className="progress-fill" style={{ width: `${data.progreso}%` }}>
-                                    <div className="progress-indicator">{data.progreso}%</div>
+                                    <div className="progress-indicator">{data.progreso}% del camino</div>
                                 </div>
                             </div>
                         </div>
@@ -143,21 +165,32 @@ export const Dashboard = () => {
 
                 <div className="row g-4">
                     <div className="col-lg-8">
+                        {/* GRÁFICA DE PESO */}
                         <div className="glass-card p-4 mb-4">
                             <div className="d-flex justify-content-between align-items-center mb-4 px-2">
-                                <h6 className="fw-bold m-0 text-muted uppercase"><i className="fas fa-chart-area me-2"></i>Evolución de Peso</h6>
-                                <button className={`btn btn-sm rounded-pill px-4 fw-bold transition-all ${mostrarIdeal ? 'btn-success text-white' : 'btn-outline-secondary'}`} onClick={() => setMostrarIdeal(!mostrarIdeal)}>
-                                    <i className={`fas ${mostrarIdeal ? 'fa-check' : 'fa-plus'} me-2`}></i>
-                                    {mostrarIdeal ? 'Mostrando Ideal' : 'Ver Peso Ideal'}
+                                <h6 className="fw-bold m-0 text-muted uppercase"><i className="fas fa-chart-line me-2"></i>Evolución de Peso</h6>
+                                <button className={`btn btn-sm rounded-pill px-4 fw-bold ${mostrarIdeal ? 'btn-success text-white' : 'btn-outline-secondary'}`} onClick={() => setMostrarIdeal(!mostrarIdeal)}>
+                                    {mostrarIdeal ? 'Ocultar Curva Ideal' : 'Ver Peso Ideal'}
                                 </button>
                             </div>
                             <div style={{ height: "300px" }}>
-                                <Line key={mostrarIdeal ? "ideal" : "actual"} data={{ labels: data.chart_config?.labels || [], datasets: chartDatasets }} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                                <Line
+                                    key={mostrarIdeal ? "ideal" : "real"}
+                                    data={{
+                                        labels: data.chart_config?.labels || [],
+                                        datasets: [
+                                            { label: "Tu Peso", data: data.chart_config?.data || [], borderColor: "#6366f1", tension: 0.4, fill: true, backgroundColor: "rgba(99, 102, 241, 0.05)", borderWidth: 4 },
+                                            ...(mostrarIdeal ? [{ label: "Rango Ideal", data: data.chart_config?.ideal_data || [], borderColor: "#10b981", borderDash: [5, 5], tension: 0.4 }] : [])
+                                        ]
+                                    }}
+                                    options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }}
+                                />
                             </div>
                         </div>
 
+                        {/* REGISTRO DIARIO */}
                         <div className="glass-card p-5">
-                            <h4 className="fw-bold mb-5 text-dark border-start border-primary border-5 ps-3">Registro Diario</h4>
+                            <h4 className="fw-bold mb-5 text-dark border-start border-primary border-5 ps-3">Registro de Hoy</h4>
                             <form onSubmit={handleGuardarDia}>
                                 <div className="row g-4">
                                     <div className="col-md-6">
@@ -167,30 +200,31 @@ export const Dashboard = () => {
                                     <div className="col-md-6">
                                         <label className="small fw-bold text-muted mb-2 uppercase ls-1">Estado de Ánimo</label>
                                         <select className="form-select premium-input" value={registro.estado_animo} onChange={(e) => setRegistro({ ...registro, estado_animo: e.target.value })}>
-                                            <option value="Feliz">Muy Feliz</option>
-                                            <option value="Tranquila">Tranquila</option>
-                                            <option value="Cansada">Cansada</option>
-                                            <option value="Sensible">Sensible</option>
+                                            <option value="Feliz">😊 Muy Feliz</option>
+                                            <option value="Tranquila">😌 Tranquila</option>
+                                            <option value="Cansada">😴 Cansada</option>
+                                            <option value="Sensible">🥺 Sensible</option>
                                         </select>
                                     </div>
 
                                     <div className="col-md-6">
                                         <div className="p-3 bg-light rounded-4 text-center shadow-sm">
-                                            <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Hidratación</label>
+                                            <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Vasos de agua</label>
                                             <div className="d-flex justify-content-center align-items-center gap-4">
-                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, vasos_agua: Math.max(0, registro.vasos_agua - 1) })}><i className="fas fa-minus"></i></button>
-                                                <span className="h4 m-0 fw-bold px-2"><i className="fas fa-tint text-info me-2"></i>{registro.vasos_agua}</span>
-                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, vasos_agua: registro.vasos_agua + 1 })}><i className="fas fa-plus"></i></button>
+                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, vasos_agua: Math.max(0, parseInt(registro.vasos_agua || 0) - 1) })}><i className="fas fa-minus"></i></button>
+                                                <span className="h4 m-0 fw-bold px-2"><i className="fas fa-glass-water text-info me-2"></i>{registro.vasos_agua}</span>
+                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, vasos_agua: parseInt(registro.vasos_agua || 0) + 1 })}><i className="fas fa-plus"></i></button>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-6">
                                         <div className="p-3 bg-light rounded-4 text-center shadow-sm">
-                                            <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Movimientos</label>
+                                            <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Movimientos del bebé</label>
                                             <div className="d-flex justify-content-center align-items-center gap-4">
-                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, patadas_bebe: Math.max(0, registro.patadas_bebe - 1) })}><i className="fas fa-minus"></i></button>
-                                                <span className="h4 m-0 fw-bold px-2"><i className="fas fa-shoe-prints text-warning me-2"></i>{registro.patadas_bebe}</span>
-                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, patadas_bebe: registro.patadas_bebe + 1 })}><i className="fas fa-plus"></i></button>
+                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, patadas_bebe: Math.max(0, parseInt(registro.patadas_bebe || 0) - 1) })}><i className="fas fa-minus"></i></button>
+                                                <span className="h4 m-0 fw-bold px-2"><i className="fas fa-baby text-warning me-2"></i>{registro.patadas_bebe}</span>
+                                                <button type="button" className="btn-round" onClick={() => setRegistro({ ...registro, patadas_bebe: parseInt(registro.patadas_bebe || 0) + 1 })}><i className="fas fa-plus"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -199,9 +233,10 @@ export const Dashboard = () => {
                                         <label className="small fw-bold text-muted mb-3 uppercase ls-1">Sueño: {registro.horas_sueno} horas</label>
                                         <input type="range" className="form-range" min="0" max="14" step="0.5" value={registro.horas_sueno} onChange={(e) => setRegistro({ ...registro, horas_sueno: e.target.value })} />
                                     </div>
+
                                     <div className="col-md-6">
-                                        <label className="small fw-bold text-muted mb-2 uppercase ls-1">Ejercicio (Minutos)</label>
-                                        <input type="number" className="form-control premium-input" value={registro.ejercicio_minutos} onChange={(e) => setRegistro({ ...registro, ejercicio_minutos: e.target.value })} />
+                                        <label className="small fw-bold text-muted mb-2 uppercase ls-1">Pasos o Ejercicio (Minutos)</label>
+                                        <input type="number" className="form-control premium-input" placeholder="Ej: 5000" value={registro.ejercicio_minutos} onChange={(e) => setRegistro({ ...registro, ejercicio_minutos: e.target.value })} />
                                     </div>
 
                                     <div className="col-12">
@@ -210,19 +245,20 @@ export const Dashboard = () => {
                                             {Object.keys(registro.sintomas).map((s) => (
                                                 <button key={s} type="button" className={`btn-sintoma ${registro.sintomas[s] ? 'active' : ''}`} onClick={() => setRegistro({ ...registro, sintomas: { ...registro.sintomas, [s]: !registro.sintomas[s] } })}>
                                                     <i className={`fas fa-check me-2 ${registro.sintomas[s] ? '' : 'd-none'}`}></i>
-                                                    {s.replace("_", " ")}
+                                                    {s.charAt(0).toUpperCase() + s.slice(1).replace("_", " ")}
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
 
                                     <div className="col-12">
-                                        <textarea className="form-control premium-input" rows="3" placeholder="Añade notas sobre cómo te sientes hoy..." value={registro.notas} onChange={(e) => setRegistro({ ...registro, notas: e.target.value })} />
+                                        <label className="small fw-bold text-muted mb-2 uppercase ls-1">Notas del día</label>
+                                        <textarea className="form-control premium-input" rows="3" placeholder="¿Cómo te has sentido hoy? ¿Algún antojo especial?..." value={registro.notas} onChange={(e) => setRegistro({ ...registro, notas: e.target.value })} />
                                     </div>
 
                                     <div className="col-12 text-end pt-4">
                                         <button type="submit" className="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-lg border-0 transition-all hover-scale">
-                                            <i className="fas fa-heart me-2"></i> Guardar Registro Diario
+                                            <i className="fas fa-heart me-2"></i> Guardar Todo
                                         </button>
                                     </div>
                                 </div>
@@ -231,34 +267,69 @@ export const Dashboard = () => {
                     </div>
 
                     <div className="col-lg-4">
-                        <div className="glass-card p-5 text-center mb-4">
-                            <h6 className="text-muted small fw-bold uppercase ls-2 mb-3">Faltan para el parto</h6>
-                            <div className="display-2 fw-bold text-dark">{data.dias_restantes}</div>
-                            <span className="badge bg-light text-primary rounded-pill px-3 py-2 fw-bold">DÍAS</span>
+                        {/* CUENTA ATRÁS */}
+                        <div className="glass-card p-5 text-center mb-4 shadow-sm" style={{ borderBottom: '8px solid #a855f7' }}>
+                            <h6 className="text-muted small fw-bold uppercase ls-2 mb-3">DÍAS PARA CONOCERLO</h6>
+                            <div className="display-1 fw-bold text-dark">{data.dias_restantes}</div>
+                            <span className="badge bg-light text-primary rounded-pill px-3 py-2 fw-bold">DÍAS RESTANTES</span>
                             <hr className="my-4 opacity-10" />
-                            <div className="small fw-bold text-muted uppercase">Fecha Estimada (FPP)</div>
-                            <div className="text-dark fw-bold">{data.salud?.fpp}</div>
+                            <div className="small fw-bold text-muted uppercase">Fecha Probable de Parto</div>
+                            <div className="text-dark fw-bold fs-5">{data.salud?.fpp}</div>
                         </div>
 
+                        {/* CONSEJO */}
                         <div className="glass-card p-4 mb-4" style={{ borderLeft: '6px solid #6366f1' }}>
                             <div className="d-flex align-items-center mb-3">
                                 <i className="fas fa-lightbulb text-warning fs-4 me-3"></i>
-                                <h6 className="fw-bold m-0 uppercase text-muted">Consejo del día</h6>
+                                <h6 className="fw-bold m-0 uppercase text-muted">Consejo para hoy</h6>
                             </div>
                             <p className="text-dark italic small mb-0 lh-lg">"{data.salud?.consejo}"</p>
                         </div>
 
-                        <button onClick={descargarPDF} className="btn btn-white glass-card w-100 py-3 mb-4 fw-bold text-danger border-0 hover-scale transition-all">
-                            <i className="fas fa-file-medical me-2"></i> Descargar Historial Médico
-                        </button>
-
+                        {/* GRÁFICA SÍNTOMAS MEJORADA */}
                         <div className="glass-card p-4">
-                            <h6 className="fw-bold text-muted small text-center mb-4 uppercase">Frecuencia Síntomas</h6>
-                            <div style={{ height: "180px" }}>
-                                <Bar key={JSON.stringify(data.frecuencia_sintomas)} data={{
-                                    labels: ["Náu", "Fat", "Esp", "Hin", "Aci"],
-                                    datasets: [{ data: data.frecuencia_sintomas ? Object.values(data.frecuencia_sintomas) : [0, 0, 0, 0, 0], backgroundColor: "rgba(99, 102, 241, 0.7)", borderRadius: 8 }]
-                                }} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                            <h6 className="fw-bold text-muted small text-center mb-4 uppercase ls-1">Frecuencia de Síntomas</h6>
+                            {/* Altura aumentada a 450px para mostrar todas las barras cómodamente */}
+                            <div style={{ height: "450px" }}>
+                                <Bar
+                                    key={JSON.stringify(data.frecuencia_sintomas)}
+                                    data={{
+                                        // Muestra el nombre completo del síntoma y lo limpia de guiones bajos
+                                        labels: data.frecuencia_sintomas ? Object.keys(data.frecuencia_sintomas).map(s => s.replace("_", " ").toUpperCase()) : [],
+                                        datasets: [{
+                                            label: 'Detecciones',
+                                            data: data.frecuencia_sintomas ? Object.values(data.frecuencia_sintomas) : [],
+                                            // Colores diferentes por barra
+                                            backgroundColor: coloresSintomas,
+                                            borderRadius: 12,
+                                            borderWidth: 1,
+                                            borderColor: 'rgba(0,0,0,0.05)'
+                                        }]
+                                    }}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        indexAxis: 'y', // Cambiado a horizontal para que las etiquetas largas se lean perfecto
+                                        plugins: {
+                                            legend: { display: false },
+                                            tooltip: { backgroundColor: '#2d3748', borderRadius: 8 }
+                                        },
+                                        scales: {
+                                            x: {
+                                                beginAtZero: true,
+                                                ticks: { stepSize: 1, color: '#64748b' },
+                                                grid: { display: false }
+                                            },
+                                            y: {
+                                                ticks: {
+                                                    font: { size: 10, weight: 'bold' },
+                                                    color: '#64748b'
+                                                },
+                                                grid: { display: false }
+                                            }
+                                        }
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>

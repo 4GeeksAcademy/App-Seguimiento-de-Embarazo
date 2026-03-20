@@ -14,7 +14,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from fpdf import FPDF
 from flask import send_file
-from api.models import db, User, Embarazo, RegistroDiario, Sintomas, Contact, TamanioBebe, ConsejoPorSemana
+from api.models import db, User, Embarazo, RegistroDiario, Sintomas, Contact, TamanioBebe, ConsejoPorSemana, Recordatorio
 
 api = Blueprint('api', __name__)
 CORS(api)
@@ -174,131 +174,166 @@ def get_dashboard():
     semana_actual = max(1, min((dias_transcurridos // 7) + 1, 42))
     dias_restantes = max(0, (embarazo.fecha_parto_estimada - hoy).days)
 
-    # 2. Lógica del Bebé (Usando tu modelo TamanioBebe)
-    # Buscamos en la DB el registro de la semana actual o el más cercano anterior
-    info_bebe = TamanioBebe.query.filter(
-        TamanioBebe.semana <= semana_actual).order_by(TamanioBebe.semana.desc()).first()
-
-    bebe_data = {
-        "tamanio": info_bebe.fruta if info_bebe else "Creciendo",
-        # Valor por defecto si no hay DB
-        "tamano_cm": info_bebe.tamano_cm if info_bebe else 0.2
+    # 2. Lógica del Bebé con PESO aproximado
+    info_bebe = TamanioBebe.query.filter_by(semana=semana_actual).first()
+    
+    # Diccionario de respaldo completo para que nunca falte información
+    respaldo_bebe = {
+        4: {"fruta": "una semilla de amapola", "icono": "🌱", "cm": 0.1, "g": 0.1},
+        8: {"fruta": "una frambuesa", "icono": "🍓", "cm": 1.6, "g": 1},
+        12: {"fruta": "una ciruela", "icono": "🫐", "cm": 5.4, "g": 14},
+        16: {"fruta": "un aguacate", "icono": "🥑", "cm": 11.6, "g": 100},
+        20: {"fruta": "un plátano", "icono": "🍌", "cm": 25.6, "g": 300},
+        25: {"fruta": "una berenjena", "icono": "🍆", "cm": 34.6, "g": 660},
+        30: {"fruta": "un repollo", "icono": "🥬", "cm": 39.9, "g": 1300},
+        35: {"fruta": "un melón", "icono": "🍈", "cm": 46.2, "g": 2400},
+        40: {"fruta": "una sandía", "icono": "🍉", "cm": 51.2, "g": 3400}
     }
 
-    # 3. Registros y Gráficas
-    imc, consejo = obtener_datos_salud(embarazo.peso_inicial, embarazo.altura)
+    if info_bebe:
+        bebe_data = {
+            "tamanio": info_bebe.fruta,
+            "icono": getattr(info_bebe, 'icono', "✨"),
+            "tamano_cm": info_bebe.tamano_cm,
+            "peso_g": getattr(info_bebe, 'peso_g', 0) # <--- Aquí sacamos el peso de tu DB
+        }
+    else:
+        # Busca la semana más cercana en el respaldo si no hay coincidencia exacta
+        semanas_keys = sorted(respaldo_bebe.keys())
+        closest_sem = min(semanas_keys, key=lambda x: abs(x - semana_actual))
+        res = respaldo_bebe[closest_sem]
+        bebe_data = {
+            "tamanio": res["fruta"],
+            "icono": res["icono"],
+            "tamano_cm": res["cm"],
+            "peso_g": res["g"] # Peso aproximado de respaldo
+        }
+
+    # 3. Registros y Gráficas de Peso
     registros = RegistroDiario.query.filter_by(
         usuario_id=user_id).order_by(RegistroDiario.fecha.asc()).all()
 
     chart_labels = ["Inicial"]
     chart_data = [embarazo.peso_inicial]
-
-    # --- CÁLCULO DE PESO IDEAL (Para que el botón funcione) ---
-    # Una guía estándar: 0.5kg/semana tras el primer trimestre
     ideal_data = [embarazo.peso_inicial]
-    for i in range(1, len(registros) + 1):
-        # Estimación simple de ganancia ideal progresiva
-        semana_reg = semana_actual  # Simplificado para el ejemplo
-        ganancia_ideal = 0 if semana_reg < 12 else (semana_reg - 12) * 0.4
-        ideal_data.append(round(embarazo.peso_inicial + ganancia_ideal, 1))
 
-    frecuencia_sintomas = {"nauseas": 0, "fatiga": 0,
-                           "dolor_espalda": 0, "hinchazon": 0}
+    for sem in range(1, semana_actual + 1):
+        ganancia = sem * 0.1 if sem <= 12 else 1.2 + ((sem - 12) * 0.4)
+        ideal_data.append(round(embarazo.peso_inicial + ganancia, 1))
+        if sem > len(registros):
+            chart_labels.append(f"Sem {sem}")
 
     for r in registros:
-        if r.peso:
-            chart_labels.append(r.fecha.strftime("%d/%m"))
-            chart_data.append(r.peso)
+        chart_labels.append(r.fecha.strftime("%d/%m"))
+        chart_data.append(r.peso)
+
+    # 4. Frecuencia de Síntomas COMPLETA
+    frecuencia_sintomas = {
+        "nauseas": 0, "fatiga": 0, "dolor_espalda": 0, 
+        "hinchazon": 0, "acidez": 0, "insomnio": 0, 
+        "calambres": 0, "antojos": 0
+    }
+    for r in registros:
         if r.sintomas:
-            # Asumiendo que r.sintomas es un objeto con atributos booleanos
             for s in frecuencia_sintomas.keys():
                 if getattr(r.sintomas, s, False):
                     frecuencia_sintomas[s] += 1
 
-    peso_actual = chart_data[-1] if chart_data else embarazo.peso_inicial
+    imc, consejo_salud = obtener_datos_salud(embarazo.peso_inicial, embarazo.altura)
 
     return jsonify({
         "embarazo_configurado": True,
         "semana_actual": semana_actual,
         "dias_restantes": dias_restantes,
-        "mensaje": MENSAJES_SEMANALES.get(semana_actual, "Disfruta cada segundo de este viaje."),
-        "bebe": bebe_data,  # Ahora incluye tamano_cm
+        "mensaje": MENSAJES_SEMANALES.get(semana_actual, "¡Disfruta el proceso!"),
+        "bebe": bebe_data,
         "salud": {
             "imc_inicial": imc,
-            "consejo": consejo,
-            "aumento_total": round(peso_actual - embarazo.peso_inicial, 1),
+            "consejo": consejo_salud,
+            "aumento_total": round(chart_data[-1] - embarazo.peso_inicial, 1),
             "fpp": embarazo.fecha_parto_estimada.strftime("%d %b, %Y")
         },
         "progreso": max(0, min(round((dias_transcurridos / 280) * 100), 100)),
         "chart_config": {
-            "labels": chart_labels,
+            "labels": chart_labels[:len(ideal_data)],
             "data": chart_data,
-            "ideal_data": ideal_data  # <--- ESTO activa el botón en el Frontend
+            "ideal_data": ideal_data
         },
         "frecuencia_sintomas": frecuencia_sintomas
     }), 200
+
 
 # --- REGISTRO DIARIO ---
 
 
 @api.route('/registro-diario', methods=['POST'])
 @jwt_required()
-def post_registro():
+def crear_registro():
     user_id = get_jwt_identity()
     body = request.get_json()
-    hoy = date.today()
 
-    # 1. Buscamos si ya existe un registro hoy para no duplicar
-    registro = RegistroDiario.query.filter(
-        RegistroDiario.usuario_id == user_id,
-        db.func.date(RegistroDiario.fecha) == hoy
-    ).first()
+    # 1. Validación de datos obligatorios
+    if not body or "peso" not in body:
+        return jsonify({"error": "El campo peso es obligatorio"}), 400
 
-    # 2. Si no existe, lo creamos
-    if not registro:
-        registro = RegistroDiario(
-            usuario_id=user_id,
-            fecha=hoy,
-            estado_animo="Feliz"  # Valor por defecto
-        )
-        db.session.add(registro)
-        db.session.flush()  # Esto genera el ID necesario para la tabla de Síntomas
-
-    # 3. Actualizamos los campos básicos (incluyendo sueño y ejercicio)
-    if body.get("peso"):
-        registro.peso = float(body["peso"])
-
-    registro.estado_animo = body.get("estado_animo", "Feliz")
-    registro.notas = body.get("notas", "")
-
-    # NUEVOS CAMPOS: Asegúrate de que existan en tu models.py
-    registro.horas_sueno = float(body.get("horas_sueno", 8))
-    registro.ejercicio_minutos = int(body.get("ejercicio_minutos", 0))
-
-    # 4. Actualizamos los síntomas (la lista ahora tiene los 8 que pide el Dashboard)
-    if "sintomas" in body:
-        if not registro.sintomas:
-            # Si no tiene objeto de síntomas vinculado, lo creamos
-            registro.sintomas = Sintomas(registro_id=registro.id)
-
-        # Lista completa de síntomas sincronizada con el Frontend
-        lista_sintomas = [
-            "nauseas", "fatiga", "dolor_espalda", "hinchazon",
-            "acidez", "insomnio", "calambres", "antojos"
-        ]
-
-        for s in lista_sintomas:
-            # Usamos setattr para asignar el valor booleano dinámicamente
-            val = body["sintomas"].get(s, False)
-            setattr(registro.sintomas, s, val)
-
-    # 5. Guardamos todo
     try:
+        # 2. Crear la instancia del Registro Diario
+        nuevo_registro = RegistroDiario(
+            usuario_id=user_id,
+            peso=float(body["peso"]),
+            estado_animo=body.get("estado_animo", "Feliz"),
+            horas_sueno=float(body.get("horas_sueno", 0)),
+            ejercicio_minutos=int(body.get("ejercicio_minutos", 0)),
+            vasos_agua=int(body.get("vasos_agua", 0)),
+            patadas_bebe=int(body.get("patadas_bebe", 0)),
+            notas=body.get("notas", "")
+        )
+
+        db.session.add(nuevo_registro)
+        db.session.flush()  # Esto genera el ID del registro sin cerrar la transacción
+
+        # 3. Si vienen síntomas, los creamos asociados al registro
+        if "sintomas" in body:
+            s_data = body["sintomas"]
+            nuevos_sintomas = Sintomas(
+                registro_id=nuevo_registro.id,
+                nauseas=s_data.get("nauseas", False),
+                fatiga=s_data.get("fatiga", False),
+                dolor_espalda=s_data.get("dolor_espalda", False),
+                hinchazon=s_data.get("hinchazon", False),
+                acidez=s_data.get("acidez", False),
+                insomnio=s_data.get("insomnio", False),
+                calambres=s_data.get("calambres", False),
+                antojos=s_data.get("antojos", False)
+            )
+            db.session.add(nuevos_sintomas)
+
         db.session.commit()
-        return jsonify({
-            "msg": "¡Progreso diario guardado correctamente! ✨",
-            "registro": registro.serialize()
-        }), 200
+        return jsonify({"msg": "Registro creado con éxito", "registro": nuevo_registro.serialize()}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")
+        return jsonify({"error": "Error interno al guardar"}), 500
+
+
+@api.route('/registro-diario/<int:registro_id>', methods=['DELETE'])
+@jwt_required()
+def delete_registro(registro_id):
+    user_id = get_jwt_identity()
+
+    registro = RegistroDiario.query.filter_by(
+        id=registro_id, usuario_id=user_id).first()
+
+    if not registro:
+        return jsonify({"error": "El registro no existe o no tienes permiso"}), 404
+
+    try:
+        # Al borrar el registro, gracias al `cascade="all, delete"` en el modelo,
+        # los síntomas asociados se borrarán automáticamente.
+        db.session.delete(registro)
+        db.session.commit()
+        return jsonify({"msg": "Registro eliminado correctamente"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
@@ -311,39 +346,136 @@ def post_registro():
 def exportar_pdf():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
+
+    if not user or not user.embarazo:
+        return jsonify({"error": "No hay datos de embarazo"}), 404
+
     registros = RegistroDiario.query.filter_by(
         usuario_id=user_id).order_by(RegistroDiario.fecha.desc()).all()
 
+    # 1. Cálculos de Resumen
+    hoy = date.today()
+    dias_transcurridos = (hoy - user.embarazo.ultima_menstruacion).days
+    semana_actual = max(1, min((dias_transcurridos // 7) + 1, 42))
+
+    # Cálculo de síntomas más frecuentes
+    sintomas_stats = {}
+    for r in registros:
+        if r.sintomas:
+            # Iteramos sobre los atributos del modelo de síntomas
+            for s in ["nauseas", "fatiga", "dolor_espalda", "hinchazon", "acidez", "insomnio", "calambres", "antojos"]:
+                if getattr(r.sintomas, s, False):
+                    sintomas_stats[s] = sintomas_stats.get(s, 0) + 1
+
+    top_sintomas = sorted(sintomas_stats.items(),
+                          key=lambda x: x[1], reverse=True)[:3]
+
+    # 2. Configuración del PDF
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
+    pdf.set_auto_page_break(auto=True, margin=20)
+
+    # --- ENCABEZADO PREMIUM ---
+    pdf.set_fill_color(99, 102, 241)
+    pdf.rect(0, 0, 210, 45, 'F')
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Arial", 'B', 22)
+    pdf.cell(190, 15, txt="INFORME MÉDICO DE SEGUIMIENTO", ln=True, align='C')
+    pdf.set_font("Arial", size=10)
     pdf.cell(
-        200, 10, txt=f"Informe de Embarazo - {user.nombre}", ln=True, align='C')
-
-    pdf.set_font("Arial", size=12)
+        190, 5, txt=f"Generado el: {hoy.strftime('%d/%m/%Y')}", ln=True, align='C')
     pdf.ln(10)
-    pdf.cell(200, 10, txt=f"Email: {user.email}", ln=True)
-    pdf.cell(
-        200, 10, txt=f"Semana actual: {user.embarazo.semana_actual if user.embarazo else 'N/A'}", ln=True)
 
-    pdf.ln(10)
-    pdf.cell(200, 10, txt="HISTORIAL DIARIO", ln=True, align='L')
-    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+    # --- SECCIÓN 1: DATOS PERSONALES Y EMBARAZO ---
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.set_fill_color(235, 235, 255)
+    pdf.cell(190, 10, txt="  1. RESUMEN DEL EMBARAZO", ln=True, fill=True)
+    pdf.ln(2)
 
+    pdf.set_font("Arial", size=10)
+    col_width = 95
+    pdf.cell(col_width, 8,
+             txt=f"Paciente: {user.nombre} {user.apellido}", ln=0)
+    pdf.cell(col_width, 8, txt=f"Semana de Gestación: {semana_actual}", ln=1)
+    pdf.cell(col_width, 8,
+             txt=f"F.U.M: {user.embarazo.ultima_menstruacion.strftime('%d/%m/%Y')}", ln=0)
+    pdf.cell(col_width, 8,
+             txt=f"F.P.P (Estimada): {user.embarazo.fecha_parto_estimada.strftime('%d/%m/%Y')}", ln=1)
+
+    # --- SECCIÓN 2: ESTADO NUTRICIONAL Y BIOMÉTRICO ---
+    pdf.ln(5)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(190, 10, txt="  2. CONTROL BIOMÉTRICO", ln=True, fill=True)
+    pdf.ln(2)
+
+    imc_inicial, recomendacion = obtener_datos_salud(
+        user.embarazo.peso_inicial, user.embarazo.altura)
+    peso_actual = registros[0].peso if registros else user.embarazo.peso_inicial
+    ganancia_total = round(peso_actual - user.embarazo.peso_inicial, 1)
+
+    pdf.set_font("Arial", size=10)
+    pdf.cell(col_width, 8,
+             txt=f"Peso Inicial: {user.embarazo.peso_inicial} kg", ln=0)
+    pdf.cell(col_width, 8, txt=f"Peso Actual: {peso_actual} kg", ln=1)
+    pdf.cell(col_width, 8, txt=f"IMC Inicial: {imc_inicial}", ln=0)
+    pdf.cell(col_width, 8, txt=f"Ganancia Total: +{ganancia_total} kg", ln=1)
+    pdf.set_font("Arial", 'I', 9)
+    pdf.cell(190, 8, txt=f"Nota médica: {recomendacion}", ln=1)
+
+    # --- SECCIÓN 3: ALERTAS DE SÍNTOMAS ---
+    pdf.ln(5)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(190, 10, txt="  3. SÍNTOMAS MÁS RECURRENTES", ln=True, fill=True)
+    pdf.ln(2)
+    pdf.set_font("Arial", size=10)
+    if top_sintomas:
+        for sintoma, cuenta in top_sintomas:
+            pdf.cell(
+                190, 7, txt=f"- {sintoma.replace('_', ' ').capitalize()}: Detectado en {cuenta} registros.", ln=1)
+    else:
+        pdf.cell(190, 7, txt="No se han registrado síntomas frecuentes.", ln=1)
+
+    # --- SECCIÓN 4: LOG DETALLADO ---
+    pdf.ln(5)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(190, 10, txt="  4. HISTORIAL DETALLADO", ln=True, fill=True)
+    pdf.ln(2)
+
+    # Cabecera tabla
+    pdf.set_font("Arial", 'B', 9)
+    pdf.set_fill_color(200, 200, 200)
+    pdf.cell(25, 8, "Fecha", 1, 0, 'C', True)
+    pdf.cell(20, 8, "Peso", 1, 0, 'C', True)
+    pdf.cell(15, 8, "Agua", 1, 0, 'C', True)
+    pdf.cell(20, 8, "Sueño", 1, 0, 'C', True)
+    pdf.cell(20, 8, "Mov.", 1, 0, 'C', True)
+    pdf.cell(90, 8, "Ánimo y Notas", 1, 1, 'C', True)
+
+    pdf.set_font("Arial", size=8)
     for r in registros:
-        pdf.ln(5)
-        txt_registro = f"Fecha: {r.fecha.strftime('%d/%m/%Y')} | Peso: {r.peso}kg | Agua: {r.vasos_agua} | Patadas: {r.patadas_bebe}"
-        pdf.cell(200, 10, txt=txt_registro, ln=True)
-        if r.notas:
-            pdf.set_font("Arial", 'I', 10)
-            pdf.cell(200, 10, txt=f"Notas: {r.notas}", ln=True)
-            pdf.set_font("Arial", size=12)
+        inicio_y = pdf.get_y()
+        pdf.cell(25, 8, r.fecha.strftime('%d/%m/%y'), 1, 0, 'C')
+        pdf.cell(20, 8, f"{r.peso}kg", 1, 0, 'C')
+        pdf.cell(15, 8, f"{r.vasos_agua}", 1, 0, 'C')
+        pdf.cell(20, 8, f"{r.horas_sueno}h", 1, 0, 'C')
+        pdf.cell(20, 8, f"{r.patadas_bebe}", 1, 0, 'C')
 
-    pdf_output = f"informe_{user_id}.pdf"
-    pdf.output(pdf_output)
-    return send_file(pdf_output, as_attachment=True)
+        # Nota y ánimo combinados
+        texto_nota = f"[{r.estado_animo}] {r.notas if r.notas else ''}"
+        pdf.multi_cell(90, 8, texto_nota, 1, 'L')
 
-# --- CONTACTO ---
+    # --- SALIDA ---
+    pdf_content = pdf.output(dest='S').encode('latin-1')
+    pdf_buffer = io.BytesIO(pdf_content)
+    pdf_buffer.seek(0)
+
+    return send_file(
+        pdf_buffer,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f"Reporte_Completo_{user.nombre}.pdf"
+    )
 
 
 @api.route('/contact', methods=['POST'])
@@ -356,3 +488,53 @@ def create_contact():
     db.session.add(new_contact)
     db.session.commit()
     return jsonify({"msg": "Mensaje enviado con éxito"}), 200
+
+#  CONSEJOS
+
+
+@api.route('/consejos/<int:semana>', methods=['GET'])
+def get_consejo(semana):
+    consejo = ConsejoPorSemana.query.filter_by(semana=semana).first()
+    if not consejo:
+        return jsonify({"msg": "No hay consejos específicos para esta semana aún"}), 404
+    return jsonify(consejo.serialize()), 200
+
+
+@api.route('/recordatorios', methods=['GET'])
+@jwt_required()
+def get_recordatorios():
+    user_id = get_jwt_identity()
+    recordatorios = Recordatorio.query.filter_by(usuario_id=user_id).all()
+    return jsonify([r.serialize() for r in recordatorios]), 200
+
+
+#     RECORDATORIOS
+
+@api.route('/recordatorios', methods=['POST'])
+@jwt_required()
+def add_recordatorio():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+
+    nuevo = Recordatorio(
+        usuario_id=user_id,
+        titulo=data.get("titulo"),
+        descripcion=data.get("descripcion"),
+        fecha_hora=datetime.fromisoformat(data.get("fecha_hora"))
+    )
+    db.session.add(nuevo)
+    db.session.commit()
+    return jsonify(nuevo.serialize()), 201
+
+
+@api.route('/recordatorios/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_recordatorio(id):
+    user_id = get_jwt_identity()
+    rec = Recordatorio.query.filter_by(id=id, usuario_id=user_id).first()
+    if not rec:
+        return jsonify({"error": "No encontrado"}), 404
+
+    db.session.delete(rec)
+    db.session.commit()
+    return jsonify({"msg": "Recordatorio eliminado"}), 200
