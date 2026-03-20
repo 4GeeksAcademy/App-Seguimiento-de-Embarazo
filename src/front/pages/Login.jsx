@@ -1,37 +1,52 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useContext } from "react"; // 1. Importamos useContext
+import { useNavigate } from "react-router-dom";
 import { LoginUser } from "../services/backendServices";
+import { Context } from "../appContext";
 
 export const Login = () => {
-
-    const navigate = useNavigate()
+    const { actions } = useContext(Context); // 3. Traemos las actions del estado global
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         email: "",
         password: ""
-    })
+    });
 
-    const [error, setError] = useState("")
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         setUser({
             ...user,
             [e.target.name]: e.target.value
-        })
-        setError("")
-    }
+        });
+        setError("");
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await LoginUser(user, navigate);
+            // Capturamos la respuesta de la función
+            const data = await LoginUser(user);
+
+            if (data && data.token) {
+                // 4. VITAL: Actualizamos el estado global para que la Navbar reaccione
+                // (Asegúrate de que esta acción exista en tu appContext)
+                actions.setToken(data.token);
+
+                // Decidimos la ruta basada en si tiene o no embarazo registrado:
+                if (data.tiene_embarazo) {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/registroEmbarazo");
+                }
+            }
         } catch (error) {
             setError("Invalid mail or password");
         }
-    }
+    };
 
     const handleRegisterClick = () => {
         navigate("/register");
-    }
+    };
 
     return (
         <div className="container mt-2 mb-2">
@@ -55,11 +70,11 @@ export const Login = () => {
                                     <label htmlFor="email" className="form-label">
                                         <i className="fas fa-envelope me-2"></i>Email
                                     </label>
-                                    <input 
+                                    <input
                                         type="email"
                                         name="email"
                                         placeholder="Ingresa tu email"
-                                        className="form-control" 
+                                        className="form-control"
                                         value={user.email}
                                         onChange={handleChange}
                                         required
@@ -70,11 +85,11 @@ export const Login = () => {
                                     <label htmlFor="password" className="form-label">
                                         <i className="fas fa-lock me-2"></i>Password
                                     </label>
-                                    <input 
+                                    <input
                                         type="password"
                                         name="password"
                                         placeholder="Enter your password"
-                                        className="form-control" 
+                                        className="form-control"
                                         value={user.password}
                                         onChange={handleChange}
                                         required
@@ -88,7 +103,7 @@ export const Login = () => {
 
                             <div className="text-center mt-3">
                                 <p className="text-muted mb-2">¿No tienes una cuenta?</p>
-                                <button 
+                                <button
                                     onClick={handleRegisterClick}
                                     className="btn btn-outline-primary w-100">
                                     <i className="fas fa-user-plus me-2"></i>Regístrate aquí
@@ -100,5 +115,5 @@ export const Login = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

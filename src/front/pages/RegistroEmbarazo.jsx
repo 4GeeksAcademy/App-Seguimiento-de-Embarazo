@@ -24,7 +24,7 @@ export const RegistroEmbarazo = () => {
 
 
         const payload = {
-           
+
             ultima_menstruacion: formData.ultima_menstruacion,
             peso_inicial: parseFloat(formData.peso_inicial),
             longitud_ciclo: parseInt(formData.longitud_ciclo),
@@ -32,15 +32,15 @@ export const RegistroEmbarazo = () => {
             altura: parseInt(formData.altura),
         };
         try {
-            const token = localStorage.getItem("token"); 
+            const token = localStorage.getItem("token");
 
             const response = await fetch(
                 `${import.meta.env.VITE_BACKEND_URL}/api/embarazo`,
                 {
                     method: "POST",
                     headers: {
-                         "Content-Type": "application/json",
-                          "Authorization": `Bearer ${token}`
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
 
 
                     },
@@ -58,7 +58,7 @@ export const RegistroEmbarazo = () => {
             console.log("Respuesta del backend:", data);
 
 
-            navigate("/panelPersonal");
+            navigate("/Dashboard");
         } catch (error) {
             console.error("Error al hacer fetch:", error);
         }

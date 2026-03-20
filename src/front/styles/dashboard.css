@@ -1,0 +1,132 @@
+/* Paleta de colores 4Geeks/DAM */
+:root {
+  --primary-pink: #ff69b4;
+  --secondary-pink: #f8bbd0;
+  --main-blue: #4361ee;
+  --soft-bg: #f8f9fa;
+  --text-gradient: linear-gradient(90deg, #4361ee, #ff69b4);
+}
+
+.dashboard-wrapper {
+  background-color: var(--soft-bg);
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+.text-gradient {
+  background: var(--text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.card-rounded {
+  border-radius: 20px !important;
+}
+
+.btn-pink {
+  background-color: var(--primary-pink);
+  color: white;
+  border: none;
+}
+
+.btn-pink:hover {
+  background-color: #e0559d;
+  color: white;
+}
+
+/* Baby Card Section */
+.bg-baby-gradient {
+  background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+}
+
+.baby-emoji-container {
+  font-size: 5rem;
+  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.1));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Water Tracker */
+.water-tracker {
+  background: #eef2f7;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid #dee2e6;
+}
+
+.water-drop {
+  font-size: 1.5rem;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+  opacity: 0.2;
+}
+
+.water-drop.active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Symptom Grid */
+.symptom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.symptom-btn {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.symptom-btn:hover {
+  background: #f0f7ff;
+}
+.symptom-btn.active {
+  background: var(--main-blue);
+  color: white;
+  border-color: var(--main-blue);
+}
+
+.tiny-text {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Charts */
+.chart-container {
+  height: 250px;
+  width: 100%;
+}
+
+.bg-light-green {
+  background-color: #e8f5e9;
+  border-left: 5px solid #4caf50;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .baby-emoji-container {
+    font-size: 3rem;
+  }
+  .symptom-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
