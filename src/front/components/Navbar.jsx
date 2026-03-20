@@ -28,7 +28,7 @@ export const Navbar = () => {
 			<div className="container navbar-inner">
 
 				<Link to="/">
-					<img src="/docs/assets/logo.png" width="70" alt="logo" />
+					<img src="logo.png" width="70" alt="logo" />
 				</Link>
 				<h6 className="fw-bold">
 					BabyFlow
