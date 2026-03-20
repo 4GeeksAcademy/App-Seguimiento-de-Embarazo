@@ -124,7 +124,7 @@ export const Dashboard = () => {
                         <button className="btn-glass" onClick={descargarPDF}>
                             <i className="fas fa-file-pdf me-2"></i> Reporte PDF
                         </button>
-                        <button className="btn-glass" onClick={() => navigate("/recordatorios")}>
+                        <button className="btn-glass" onClick={() => navigate("/recordatorio")}>
                             <i className="fas fa-bell me-2"></i> Recordatorios
                         </button>
                     </div>

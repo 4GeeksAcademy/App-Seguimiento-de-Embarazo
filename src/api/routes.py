@@ -471,78 +471,6 @@ def delete_recordatorio(id):
     return jsonify({"msg": "User created successfully"}), 201
 
 
-
-# LOGIN
-
-@api.route('/login', methods=['POST'])
-def login():
-
-    data = request.get_json()
-
-    email = data.get("email")
-    password = data.get("password")
-
-    if not email or not password:
-        return jsonify({"error": "email and password required"}), 400
-
-    existing_user = db.session.execute(
-        select(User).where(User.email == email)
-    ).scalar_one_or_none()
-
-    if not existing_user:
-        return jsonify({"error": "Invalid email or password"}), 400
-
-    if not existing_user.check_password(password):
-        return jsonify({"error": "Invalid email or password"}), 400
-
-    token = create_access_token(identity=str(existing_user.id))
-
-    return jsonify({
-        "msg": "Login successful",
-        "token": token,
-        "user": existing_user.serialize()
-    }), 200
-
-
-# CREAR EMBARAZO
-
-@api.route('/embarazo', methods=['POST'])
-@jwt_required()
-def crear_embarazo():
-
-    data = request.get_json()
-
-    usuario_id = get_jwt_identity()
-
-    try:
-        ultima_menstruacion = datetime.strptime(
-            data.get("ultima_menstruacion"), "%Y-%m-%d"
-        ).date()
-    except:
-        return jsonify({"error": "Invalid fecha_ultima_menstruacion format"}), 400
-
-    peso_inicial = data.get("peso_inicial")
-    longitud_ciclo = data.get("longitud_ciclo")
-    numero_bebes = data.get("numero_bebes", 1)
-    altura = data.get("altura")
-
-   
-    
-    nuevo_embarazo = Embarazo(
-        usuario_id=usuario_id,
-        ultima_menstruacion=ultima_menstruacion,
-        peso_inicial=peso_inicial,
-        longitud_ciclo=longitud_ciclo,
-        numero_bebes=numero_bebes,
-        altura=altura,
-       
-    )
-
-    db.session.add(nuevo_embarazo)
-    db.session.commit()
-
-    return jsonify({"msg": "Pregnancy created"}), 201
-
 # OBTENER EMBARAZO
 
 @api.route('/embarazo/<int:user_id>', methods=['GET'])
@@ -565,40 +493,6 @@ def obtener_embarazo(user_id):
 
     return jsonify(data), 200
 
-
-# CREAR REGISTRO DIARIO
-
-@api.route('/registro-diario', methods=['POST'])
-def crear_registro_diario():
-
-    data = request.get_json()
-
-    usuario_id = data.get("usuario_id")
-
-    try:
-        fecha = datetime.strptime(
-            data.get("fecha"), "%Y-%m-%d")
-        fecha_actual = datetime.strptime(
-            data.get("fecha_actual"), "%Y-%m-%d"
-        ).date()
-    except:
-        return jsonify({"error": "Invalid fecha_actual"}), 400
-
-    nuevo_registro = RegistroDiario(
-        usuario_id=usuario_id,
-        fecha=fecha,
-        fecha_actual=fecha_actual,
-        peso=data.get("peso"),
-        estado_animo=data.get("estado_animo"),
-        nivel_energia=data.get("nivel_energia"),
-        ejercicio_minutos=data.get("ejercicio_minutos"),
-        notas=data.get("notas")
-    )
-
-    db.session.add(nuevo_registro)
-    db.session.commit()
-
-    return jsonify({"msg": "Register created"}), 201
 
 
 # OBTENER REGISTROS
@@ -703,42 +597,6 @@ def obtener_sintomas(registro_id):
 
     return jsonify(sintomas.serialize()), 200
 
-
-# ELIMINAR REGISTRO
-
-@api.route('/registro-diario/<int:registro_id>', methods=['DELETE'])
-def eliminar_registro(registro_id):
-
-    registro = db.session.get(RegistroDiario, registro_id)
-
-    if registro is None:
-        return jsonify({"error": "Register not found"}), 404
-
-    sintomas = db.session.execute(
-        select(Sintomas).where(Sintomas.registro_id == registro_id)
-    ).scalars().all()
-
-    for s in sintomas:
-        db.session.delete(s)
-
-    db.session.delete(registro)
-    db.session.commit()
-
-    return jsonify({"msg": "Register deleted"}), 200
-
-# CONSEJO POR SEMANA
-
-@api.route('/consejos/<int:semana>', methods=['GET'])
-def obtener_consejo(semana):
-
-    consejo = db.session.execute(
-        select(ConsejoPorSemana).where(ConsejoPorSemana.semana == semana)
-    ).scalar_one_or_none()
-
-    if consejo is None:
-        return jsonify({"error": "No advice for this week"}), 404
-
-    return jsonify(consejo.serialize()), 200
 
 
 # HISTORIAL COMPLETO
@@ -1262,21 +1120,3 @@ def registroEmbarazo():
 
     return jsonify({"msg": "Registro creado correctamente"}), 201
 
-@api.route('/contact', methods=['POST'])
-def create_contact():
-    data = request.get_json()
-    email = data.get("email")
-    description = data.get("description")
-    
-    if not email or not description:
-        return jsonify({"error": "Email and description are required"}), 400
-
-    new_contact = Contact(
-        email=email, 
-        description=description
-    )
-    
-    db.session.add(new_contact)
-    db.session.commit()
-    
-    return jsonify({"msg": "Contact message sent successfully"}), 200

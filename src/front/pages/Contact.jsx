@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendContactMessage } from "../services/backendServices";
+import { sendContactMessage } from "../services/backendServices.js";
 
 export const Contact = () => {
     const navigate = useNavigate();

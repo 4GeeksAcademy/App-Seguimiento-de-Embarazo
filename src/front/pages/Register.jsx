@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { createUser } from "../services/backendServices";
+import { createUser } from "../services/backendServices.js";
 
 
 export const Register = () => {

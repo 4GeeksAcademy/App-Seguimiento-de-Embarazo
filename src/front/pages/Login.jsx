@@ -1,6 +1,6 @@
 import { useState, useContext } from "react"; // 1. Importamos useContext
 import { useNavigate } from "react-router-dom";
-import { LoginUser } from "../services/backendServices";
+import { LoginUser } from "../services/backendServices.js";
 import { Context } from "../appContext";
 
 export const Login = () => {

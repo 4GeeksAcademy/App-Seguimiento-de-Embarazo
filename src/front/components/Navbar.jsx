@@ -67,6 +67,9 @@ export const Navbar = () => {
 								</Link>
 							)}
 						</li>
+						<li className="nav-item">
+							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
+						</li>
 
 						{/* LÓGICA DINÁMICA: LOGIN O LOG OUT */}
 						<li className="nav-item nav-button">
