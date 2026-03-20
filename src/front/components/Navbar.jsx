@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../appContext";
 import "../styles/navbar.css";
 
 export const Navbar = () => {
-
+	const { store, actions } = useContext(Context);
+	const navigate = useNavigate();
 	const [scrolled, setScrolled] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
 
@@ -11,17 +13,27 @@ export const Navbar = () => {
 		const handleScroll = () => {
 			setScrolled(window.scrollY > 10);
 		};
-
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
+
+	const handleLogout = () => {
+		actions.logout(); 
+		setMenuOpen(false);
+		navigate("/"); 
+	};
 
 	return (
 		<nav className={`navbar navbar-expand-lg bg-white fixed-top ${scrolled ? "scrolled" : ""}`}>
 			<div className="container navbar-inner">
 
-				
-				<img src="/docs/assets/logo.png" width="70" alt="logo" />
+				<Link to="/">
+					<img src="/docs/assets/logo.png" width="70" alt="logo" />
+				</Link>
+				<h6 className="fw-bold">
+					BabyFlow
+				</h6>
+
 				<button
 					className="navbar-toggler"
 					type="button"
@@ -38,21 +50,33 @@ export const Navbar = () => {
 						</li>
 
 						<li className="nav-item">
-							<Link className="nav-link custom-link" to="/Servicios" onClick={() => setMenuOpen(false)}>Servicios</Link>
+							<Link className="nav-link custom-link" to="/informacion" onClick={() => setMenuOpen(false)}>Información</Link>
 						</li>
 
 						<li className="nav-item">
 							<Link className="nav-link custom-link" to="/contact" onClick={() => setMenuOpen(false)}>Contacto</Link>
 						</li>
-
 						<li className="nav-item">
 							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de Noticias</Link>
 						</li>
 
+						<li className="nav-item">
+							{store.token && (
+								<Link className="nav-link custom-link" to="/dashboard" onClick={() => setMenuOpen(false)}>
+									Panel Personal
+								</Link>
+							)}
+						</li>
 						<li className="nav-item nav-button">
-							<Link className="custom-btn" to="/Login" onClick={() => setMenuOpen(false)}>
-								Login
-							</Link>
+							{!store.token ? (
+								<Link className="custom-btn" to="/Login" onClick={() => setMenuOpen(false)}>
+									Login
+								</Link>
+							) : (
+								<button className="custom-btn" onClick={handleLogout} style={{ border: 'none', cursor: 'pointer', background: 'transparent' }}>
+									Log Out
+								</button>
+							)}
 						</li>
 
 					</ul>

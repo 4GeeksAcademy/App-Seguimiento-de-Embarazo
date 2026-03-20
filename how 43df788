@@ -1,0 +1,89 @@
+[33m1065cc9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDevelop[m[33m)[m HEAD@{0}: checkout: moving from Develop to Develop
+[33m1065cc9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDevelop[m[33m)[m HEAD@{1}: checkout: moving from Nocturno to Develop
+[33m6ad0b42[m[33m ([m[1;32mNocturno[m[33m)[m HEAD@{2}: rebase (abort): returning to refs/heads/Nocturno
+[33m43df788[m[33m ([m[1;31morigin/Develop[m[33m)[m HEAD@{3}: pull --rebase origin Develop (start): checkout 43df788b9ea508bee2d828d8203b831b5f073ff2
+[33m6ad0b42[m[33m ([m[1;32mNocturno[m[33m)[m HEAD@{4}: rebase (finish): returning to refs/heads/Nocturno
+[33m6ad0b42[m[33m ([m[1;32mNocturno[m[33m)[m HEAD@{5}: rebase (pick): cambios en Nocturno
+[33ma7ca75b[m HEAD@{6}: rebase (continue): noticiasEmbarazo
+[33m840ffbb[m HEAD@{7}: rebase (continue): Noticias sobre el parto
+[33m75218f4[m HEAD@{8}: rebase (continue): terminado
+[33m4156865[m HEAD@{9}: rebase (pick): registroEmbarazo
+[33mf8dbe49[m HEAD@{10}: rebase (pick): falta Por terminar
+[33m4542864[m HEAD@{11}: rebase (pick): registroEmbarazo
+[33m4e12cc5[m HEAD@{12}: rebase (pick): falta Por terminar
+[33m52439b7[m HEAD@{13}: rebase (pick): falta Por terminar
+[33m94f8a77[m HEAD@{14}: rebase (pick): falta Por terminar
+[33ma722845[m HEAD@{15}: rebase (pick): falta Por terminar
+[33m641eca0[m HEAD@{16}: rebase (continue): registroEmbarazo
+[33mde1554d[m HEAD@{17}: pull --rebase origin Develop (pick): modo nocturno y cambios en el navbar
+[33m0c145e6[m HEAD@{18}: pull --rebase origin Develop (start): checkout 0c145e6d6b0afdb66da7f4d9695bf3e7ee2c90a8
+[33m098c67b[m HEAD@{19}: rebase (finish): returning to refs/heads/Nocturno
+[33m098c67b[m HEAD@{20}: rebase (pick): cambios en Nocturno
+[33mf78faea[m HEAD@{21}: rebase (pick): noticiasEmbarazo
+[33m65120a8[m HEAD@{22}: rebase (pick): noticiasEmbarazo
+[33mad54504[m HEAD@{23}: rebase (pick): Noticias sobre el parto
+[33m532d292[m HEAD@{24}: rebase (pick): Noticias sobre el parto
+[33m3a9287d[m HEAD@{25}: rebase (pick): terminado
+[33mba79b8a[m HEAD@{26}: rebase (continue): registroEmbarazo
+[33mb18ae5a[m HEAD@{27}: rebase (pick): falta Por terminar
+[33m20fb79c[m HEAD@{28}: rebase (continue): registroEmbarazo
+[33m2ca7c1b[m HEAD@{29}: rebase (continue): falta Por terminar
+[33mdfd43b7[m HEAD@{30}: rebase (continue): falta Por terminar
+[33m496b54e[m HEAD@{31}: rebase (pick): falta Por terminar
+[33m25ede46[m HEAD@{32}: rebase (continue): falta Por terminar
+[33mea3c16c[m HEAD@{33}: rebase (continue): registroEmbarazo
+[33mb16e875[m[33m ([m[1;31morigin/Nocturno[m[33m)[m HEAD@{34}: pull --rebase origin Nocturno (start): checkout b16e875eb33f77fc3ae3a8fa09ba5dcf619ed413
+[33mec69a35[m HEAD@{35}: commit: cambios en Nocturno
+[33me741c2d[m HEAD@{36}: pull --rebase origin Develop (finish): returning to refs/heads/Nocturno
+[33me741c2d[m HEAD@{37}: pull --rebase origin Develop (pick): modo nocturno y cambios en el navbar
+[33m0c145e6[m HEAD@{38}: pull --rebase origin Develop (start): checkout 0c145e6d6b0afdb66da7f4d9695bf3e7ee2c90a8
+[33m0eb211f[m HEAD@{39}: pull --rebase origin Develop (finish): returning to refs/heads/Nocturno
+[33m0eb211f[m HEAD@{40}: pull --rebase origin Develop (pick): modo nocturno y cambios en el navbar
+[33me9c7c18[m HEAD@{41}: pull --rebase origin Develop (start): checkout e9c7c18af09b6944a3d5a994c65a8167b3b29ea1
+[33mb16e875[m[33m ([m[1;31morigin/Nocturno[m[33m)[m HEAD@{42}: commit: modo nocturno y cambios en el navbar
+[33m5660d34[m[33m ([m[1;32minformacion[m[33m)[m HEAD@{43}: checkout: moving from informacion to Nocturno
+[33m5660d34[m[33m ([m[1;32minformacion[m[33m)[m HEAD@{44}: pull origin Develop: Fast-forward
+[33m7d81b31[m HEAD@{45}: pull origin Develop: Fast-forward
+[33m8c1464a[m[33m ([m[1;31morigin/informacion[m[33m)[m HEAD@{46}: commit: vista informacion
+[33ma5fbaff[m[33m ([m[1;31morigin/contact[m[33m, [m[1;32mcontact[m[33m)[m HEAD@{47}: checkout: moving from contact to informacion
+[33ma5fbaff[m[33m ([m[1;31morigin/contact[m[33m, [m[1;32mcontact[m[33m)[m HEAD@{48}: commit: backend de contact
+[33madfa3d4[m HEAD@{49}: commit (merge): Merge branch 'contact' of https://github.com/4GeeksAcademy/App-Seguimiento-de-Embarazo into contact
+[33m153a237[m HEAD@{50}: commit (amend): contacto front y back
+[33m39f6c6e[m HEAD@{51}: pull --no-rebase origin contact: updating HEAD
+[33m39f6c6e[m HEAD@{52}: commit: contacto front y back
+[33m2edc1cd[m HEAD@{53}: rebase (finish): returning to refs/heads/contact
+[33m2edc1cd[m HEAD@{54}: rebase (pick): todo junto
+[33m47e6c9d[m HEAD@{55}: rebase (pick): contacto front y back
+[33m8b3dc43[m HEAD@{56}: rebase (pick): Version arreglada rutas
+[33m1ad187b[m HEAD@{57}: rebase (continue): Backend completo
+[33m551c342[m HEAD@{58}: rebase (continue): Preparación Bases de Datos: endpoints completos, historial, API pregnancy calculator, PDF report y preparación para gráficas
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{59}: pull --rebase origin contact (start): checkout d62d51642423385869a510204280f7ad87e8ccb9
+[33m66adb0b[m HEAD@{60}: commit: todo junto
+[33ma71aca5[m HEAD@{61}: checkout: moving from contact to contact
+[33ma71aca5[m HEAD@{62}: rebase (finish): returning to refs/heads/contact
+[33ma71aca5[m HEAD@{63}: rebase (continue): contacto front y back
+[33maf5eec1[m HEAD@{64}: pull --rebase origin Develop (start): checkout af5eec1ecaa27bcdeb77e70c67e202705cadda28
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{65}: checkout: moving from Develop to contact
+[33m1065cc9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDevelop[m[33m)[m HEAD@{66}: rebase (finish): returning to refs/heads/Develop
+[33m1065cc9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDevelop[m[33m)[m HEAD@{67}: rebase (continue): contacto front y back
+[33m8e39ac5[m HEAD@{68}: commit: contact back y front
+[33maf5eec1[m HEAD@{69}: pull --rebase origin Develop (start): checkout af5eec1ecaa27bcdeb77e70c67e202705cadda28
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{70}: reset: moving to HEAD
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{71}: reset: moving to HEAD
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{72}: pull --rebase origin contact: Fast-forward
+[33mf8e1f17[m HEAD@{73}: checkout: moving from contact to Develop
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{74}: checkout: moving from footer to contact
+[33md62d516[m[33m ([m[1;32mfooter[m[33m)[m HEAD@{75}: commit: contacto front y back
+[33madb9c1d[m[33m ([m[1;31morigin/footer[m[33m)[m HEAD@{76}: commit: footer sin la parte de traduccion, tambien faltan los colores
+[33m75325b5[m[33m ([m[1;32mcambios-en-botone[m[33m)[m HEAD@{77}: checkout: moving from cambios-en-botone to footer
+[33m75325b5[m[33m ([m[1;32mcambios-en-botone[m[33m)[m HEAD@{78}: pull origin Develop: Fast-forward
+[33m39e7806[m[33m ([m[1;31morigin/cambios-en-botone[m[33m)[m HEAD@{79}: commit: modificaciones en botones
+[33mf8e1f17[m HEAD@{80}: checkout: moving from Develop to cambios-en-botone
+[33mf8e1f17[m HEAD@{81}: pull origin Develop: Fast-forward
+[33mdfcb996[m HEAD@{82}: pull origin Develop: Fast-forward
+[33m4b82df0[m HEAD@{83}: pull origin Develop: Fast-forward
+[33ma69b664[m[33m ([m[1;31morigin/login[m[33m, [m[1;32mlogin[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{84}: checkout: moving from develop to Develop
+[33ma69b664[m[33m ([m[1;31morigin/login[m[33m, [m[1;32mlogin[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{85}: checkout: moving from login to develop
+[33ma69b664[m[33m ([m[1;31morigin/login[m[33m, [m[1;32mlogin[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{86}: commit: login completo
+[33m3278e51[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mlogin-backend[m[33m)[m HEAD@{87}: checkout: moving from login-backend to login
+[33m3278e51[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mlogin-backend[m[33m)[m HEAD@{88}: checkout: moving fro
