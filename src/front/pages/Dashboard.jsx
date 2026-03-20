@@ -22,16 +22,10 @@ const estadoInicialRegistro = {
     },
 };
 
-// Paleta de colores para la gráfica de síntomas
 const coloresSintomas = [
-    'rgba(255, 99, 132, 0.7)',   // Rosa
-    'rgba(54, 162, 235, 0.7)',   // Azul
-    'rgba(255, 206, 86, 0.7)',   // Amarillo
-    'rgba(75, 192, 192, 0.7)',   // Turquesa
-    'rgba(153, 102, 255, 0.7)',  // Morado
-    'rgba(255, 159, 64, 0.7)',   // Naranja
-    'rgba(199, 199, 199, 0.7)',  // Gris
-    'rgba(83, 102, 255, 0.7)'    // Indigo
+    'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
+    'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)',
+    'rgba(199, 199, 199, 0.7)', 'rgba(83, 102, 255, 0.7)'
 ];
 
 export const Dashboard = () => {
@@ -99,6 +93,7 @@ export const Dashboard = () => {
         } catch (error) { alert("Error al conectar"); }
     };
 
+    // RESTAURADO: Función original para el informe PDF completo
     const descargarPDF = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/exportar-pdf`, {
@@ -125,6 +120,7 @@ export const Dashboard = () => {
 
                 <div className="motivational-hero">
                     <div className="top-buttons">
+                        {/* RESTAURADO: Botón original con icono de PDF y texto de reporte */}
                         <button className="btn-glass" onClick={descargarPDF}>
                             <i className="fas fa-file-pdf me-2"></i> Reporte PDF
                         </button>
@@ -136,7 +132,6 @@ export const Dashboard = () => {
                     <p className="fs-4 fw-light opacity-90 italic">"{data.mensaje}"</p>
                 </div>
 
-                {/* COMPARADOR DE TAMAÑO GIGANTE */}
                 <div className="glass-card p-5 mb-5 text-center">
                     <div className="row justify-content-center align-items-center">
                         <div className="col-md-4">
@@ -147,11 +142,9 @@ export const Dashboard = () => {
                             <h2 className="comparador-texto mb-0 text-capitalize">{data.bebe?.tamanio || "una pequeña semilla"}</h2>
                             <h3 className="display-6 text-muted fw-light mt-2">Semana {data.semana_actual}</h3>
                         </div>
-
                         <div className="col-md-10 mt-4">
                             <div className="d-flex justify-content-center gap-5 border-top pt-4">
                                 <span className="fs-5 text-muted"><i className="fas fa-ruler-vertical me-2 text-info"></i>Longitud: <strong>{data.bebe?.tamano_cm || "--"} cm</strong></span>
-                                {/* CORRECCIÓN PESO BEBÉ: Se usa data.bebe.peso_g enviado por el backend */}
                                 <span className="fs-5 text-muted"><i className="fas fa-weight-hanging me-2 text-warning"></i>Peso aprox: <strong>{data.bebe?.peso_g || "--"} g</strong></span>
                             </div>
                             <div className="progress-wrapper">
@@ -165,7 +158,6 @@ export const Dashboard = () => {
 
                 <div className="row g-4">
                     <div className="col-lg-8">
-                        {/* GRÁFICA DE PESO */}
                         <div className="glass-card p-4 mb-4">
                             <div className="d-flex justify-content-between align-items-center mb-4 px-2">
                                 <h6 className="fw-bold m-0 text-muted uppercase"><i className="fas fa-chart-line me-2"></i>Evolución de Peso</h6>
@@ -179,16 +171,52 @@ export const Dashboard = () => {
                                     data={{
                                         labels: data.chart_config?.labels || [],
                                         datasets: [
-                                            { label: "Tu Peso", data: data.chart_config?.data || [], borderColor: "#6366f1", tension: 0.4, fill: true, backgroundColor: "rgba(99, 102, 241, 0.05)", borderWidth: 4 },
-                                            ...(mostrarIdeal ? [{ label: "Rango Ideal", data: data.chart_config?.ideal_data || [], borderColor: "#10b981", borderDash: [5, 5], tension: 0.4 }] : [])
+                                            {
+                                                label: "Tu Peso",
+                                                data: data.chart_config?.data || [],
+                                                borderColor: "#6366f1",
+                                                tension: 0.4,
+                                                fill: true,
+                                                backgroundColor: (context) => {
+                                                    const ctx = context.chart.ctx;
+                                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                                                    gradient.addColorStop(0, "rgba(99, 102, 241, 0.3)");
+                                                    gradient.addColorStop(1, "rgba(99, 102, 241, 0)");
+                                                    return gradient;
+                                                },
+                                                borderWidth: 4,
+                                                spanGaps: true,
+                                                pointRadius: 4,
+                                                pointBackgroundColor: "#ffffff",
+                                                pointBorderColor: "#6366f1",
+                                                pointBorderWidth: 2
+                                            },
+                                            ...(mostrarIdeal ? [{
+                                                label: "Rango Ideal",
+                                                data: data.chart_config?.ideal_data || [],
+                                                borderColor: "#10b981",
+                                                borderDash: [5, 5],
+                                                tension: 0.4,
+                                                pointRadius: 0
+                                            }] : [])
                                         ]
                                     }}
-                                    options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: { legend: { position: 'bottom' } },
+                                        scales: {
+                                            x: {
+                                                ticks: { autoSkip: true, maxTicksLimit: 10, maxRotation: 0 },
+                                                grid: { display: false }
+                                            },
+                                            y: { grid: { color: "rgba(0,0,0,0.05)" } }
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
 
-                        {/* REGISTRO DIARIO */}
                         <div className="glass-card p-5">
                             <h4 className="fw-bold mb-5 text-dark border-start border-primary border-5 ps-3">Registro de Hoy</h4>
                             <form onSubmit={handleGuardarDia}>
@@ -206,7 +234,6 @@ export const Dashboard = () => {
                                             <option value="Sensible">🥺 Sensible</option>
                                         </select>
                                     </div>
-
                                     <div className="col-md-6">
                                         <div className="p-3 bg-light rounded-4 text-center shadow-sm">
                                             <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Vasos de agua</label>
@@ -217,7 +244,6 @@ export const Dashboard = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="col-md-6">
                                         <div className="p-3 bg-light rounded-4 text-center shadow-sm">
                                             <label className="small fw-bold text-muted d-block mb-3 uppercase ls-1">Movimientos del bebé</label>
@@ -228,17 +254,14 @@ export const Dashboard = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="col-md-6 pt-3">
                                         <label className="small fw-bold text-muted mb-3 uppercase ls-1">Sueño: {registro.horas_sueno} horas</label>
                                         <input type="range" className="form-range" min="0" max="14" step="0.5" value={registro.horas_sueno} onChange={(e) => setRegistro({ ...registro, horas_sueno: e.target.value })} />
                                     </div>
-
                                     <div className="col-md-6">
                                         <label className="small fw-bold text-muted mb-2 uppercase ls-1">Pasos o Ejercicio (Minutos)</label>
                                         <input type="number" className="form-control premium-input" placeholder="Ej: 5000" value={registro.ejercicio_minutos} onChange={(e) => setRegistro({ ...registro, ejercicio_minutos: e.target.value })} />
                                     </div>
-
                                     <div className="col-12">
                                         <label className="small fw-bold text-muted mb-3 d-block uppercase ls-1">Síntomas detectados</label>
                                         <div className="d-flex flex-wrap gap-2">
@@ -250,12 +273,6 @@ export const Dashboard = () => {
                                             ))}
                                         </div>
                                     </div>
-
-                                    <div className="col-12">
-                                        <label className="small fw-bold text-muted mb-2 uppercase ls-1">Notas del día</label>
-                                        <textarea className="form-control premium-input" rows="3" placeholder="¿Cómo te has sentido hoy? ¿Algún antojo especial?..." value={registro.notas} onChange={(e) => setRegistro({ ...registro, notas: e.target.value })} />
-                                    </div>
-
                                     <div className="col-12 text-end pt-4">
                                         <button type="submit" className="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-lg border-0 transition-all hover-scale">
                                             <i className="fas fa-heart me-2"></i> Guardar Todo
@@ -267,7 +284,6 @@ export const Dashboard = () => {
                     </div>
 
                     <div className="col-lg-4">
-                        {/* CUENTA ATRÁS */}
                         <div className="glass-card p-5 text-center mb-4 shadow-sm" style={{ borderBottom: '8px solid #a855f7' }}>
                             <h6 className="text-muted small fw-bold uppercase ls-2 mb-3">DÍAS PARA CONOCERLO</h6>
                             <div className="display-1 fw-bold text-dark">{data.dias_restantes}</div>
@@ -277,7 +293,6 @@ export const Dashboard = () => {
                             <div className="text-dark fw-bold fs-5">{data.salud?.fpp}</div>
                         </div>
 
-                        {/* CONSEJO */}
                         <div className="glass-card p-4 mb-4" style={{ borderLeft: '6px solid #6366f1' }}>
                             <div className="d-flex align-items-center mb-3">
                                 <i className="fas fa-lightbulb text-warning fs-4 me-3"></i>
@@ -286,20 +301,16 @@ export const Dashboard = () => {
                             <p className="text-dark italic small mb-0 lh-lg">"{data.salud?.consejo}"</p>
                         </div>
 
-                        {/* GRÁFICA SÍNTOMAS MEJORADA */}
                         <div className="glass-card p-4">
                             <h6 className="fw-bold text-muted small text-center mb-4 uppercase ls-1">Frecuencia de Síntomas</h6>
-                            {/* Altura aumentada a 450px para mostrar todas las barras cómodamente */}
                             <div style={{ height: "450px" }}>
                                 <Bar
                                     key={JSON.stringify(data.frecuencia_sintomas)}
                                     data={{
-                                        // Muestra el nombre completo del síntoma y lo limpia de guiones bajos
                                         labels: data.frecuencia_sintomas ? Object.keys(data.frecuencia_sintomas).map(s => s.replace("_", " ").toUpperCase()) : [],
                                         datasets: [{
                                             label: 'Detecciones',
                                             data: data.frecuencia_sintomas ? Object.values(data.frecuencia_sintomas) : [],
-                                            // Colores diferentes por barra
                                             backgroundColor: coloresSintomas,
                                             borderRadius: 12,
                                             borderWidth: 1,
@@ -309,24 +320,11 @@ export const Dashboard = () => {
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
-                                        indexAxis: 'y', // Cambiado a horizontal para que las etiquetas largas se lean perfecto
-                                        plugins: {
-                                            legend: { display: false },
-                                            tooltip: { backgroundColor: '#2d3748', borderRadius: 8 }
-                                        },
+                                        indexAxis: 'y',
+                                        plugins: { legend: { display: false } },
                                         scales: {
-                                            x: {
-                                                beginAtZero: true,
-                                                ticks: { stepSize: 1, color: '#64748b' },
-                                                grid: { display: false }
-                                            },
-                                            y: {
-                                                ticks: {
-                                                    font: { size: 10, weight: 'bold' },
-                                                    color: '#64748b'
-                                                },
-                                                grid: { display: false }
-                                            }
+                                            x: { beginAtZero: true, ticks: { stepSize: 1, color: '#64748b' }, grid: { display: false } },
+                                            y: { ticks: { font: { size: 10, weight: 'bold' }, color: '#64748b' }, grid: { display: false } }
                                         }
                                     }}
                                 />
