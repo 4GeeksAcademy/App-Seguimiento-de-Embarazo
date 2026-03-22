@@ -1,0 +1,321 @@
+/* ========================================
+   HERO SECTION
+   ======================================== */
+
+.home-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-min-vh {
+    min-height: 100vh;
+}
+
+/* ========================================
+   TEXTO
+   ======================================== */
+
+.home-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.75rem;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+}
+
+.home-title {
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1rem;
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
+    line-height: 1.2;
+}
+
+.home-title-gradient {
+    background: linear-gradient(135deg, #ffd1dc 0%, #ffb3d9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.home-description {
+    color: white;
+    opacity: 0.75;
+    margin-bottom: 1.5rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+/* ========================================
+   BOTONES
+   ======================================== */
+
+.home-btn-primary,
+.home-btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.home-btn-primary {
+    background: white;
+    color: #667eea;
+    border: none;
+}
+
+.home-btn-primary:hover {
+    transform: translateY(-2px);
+    color: #667eea;
+}
+
+.home-btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.home-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* ========================================
+   VERSIÓN MÓVIL
+   ======================================== */
+
+.home-mobile-circle {
+    display: inline-block;
+    background: white;
+    border-radius: 50%;
+    padding: 2rem;
+}
+
+.home-mobile-emoji {
+    font-size: clamp(4rem, 15vw, 6rem);
+}
+
+.home-mobile-title {
+    font-weight: bold;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    color: #667eea;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+}
+
+.home-mini-card {
+    border-radius: 0.75rem;
+    padding: 1rem 0;
+}
+
+.home-card-calendar {
+    background: linear-gradient(135deg, #ffd1dc 0%, #ffb3d9 100%);
+}
+
+.home-card-tips {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.home-card-alerts {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.home-card-icon {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.home-card-label {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin-top: 0.25rem;
+}
+
+/* ========================================
+   VERSIÓN DESKTOP - CÍRCULOS
+   ======================================== */
+
+.home-desktop-circles {
+    position: relative;
+    height: 600px;
+}
+
+.home-circle {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.home-circle:hover {
+    transform: scale(1.05);
+}
+
+/* Círculo Central */
+.home-circle-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.home-main-circle {
+    width: 300px;
+    height: 300px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-main-emoji {
+    font-size: 6rem;
+}
+
+.home-main-title {
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    color: #667eea;
+}
+
+/* Posiciones de círculos secundarios */
+.home-circle-tl {
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    z-index: 2;
+}
+
+.home-circle-tr {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    z-index: 1;
+}
+
+.home-circle-bl {
+    position: absolute;
+    bottom: 8%;
+    left: 8%;
+    z-index: 2;
+}
+
+.home-circle-br {
+    position: absolute;
+    bottom: 8%;
+    right: 8%;
+    z-index: 1;
+}
+
+/* Tamaños de círculos secundarios */
+.home-circle-calendar,
+.home-circle-health,
+.home-circle-alerts,
+.home-circle-tips {
+    width: 130px;
+    height: 130px;
+}
+
+.home-circle-calendar {
+    background: linear-gradient(135deg, #ffd1dc 0%, #ffb3d9 100%);
+}
+
+.home-circle-health {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.home-circle-alerts {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.home-circle-tips {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ========================================
+   RESPONSIVE - PANTALLAS GRANDES
+   ======================================== */
+
+@media (min-width: 1400px) {
+    .home-hero .container {
+        max-width: 1320px;
+    }
+
+    .home-desktop-circles {
+        height: 700px;
+    }
+
+    .home-main-circle {
+        width: 350px;
+        height: 350px;
+    }
+
+    .home-main-emoji {
+        font-size: 7rem;
+    }
+
+    .home-main-title {
+        font-size: 1.8rem;
+    }
+
+    .home-circle-calendar,
+    .home-circle-health,
+    .home-circle-alerts,
+    .home-circle-tips {
+        width: 150px;
+        height: 150px;
+    }
+
+    .home-circle-calendar i,
+    .home-circle-health i,
+    .home-circle-alerts i,
+    .home-circle-tips i {
+        font-size: 3.5rem !important;
+    }
+}
+
+
+@media (min-width: 1920px) {
+    .home-hero .container {
+        max-width: 1600px;
+    }
+
+    .home-desktop-circles {
+        height: 800px;
+    }
+
+    .home-main-circle {
+        width: 400px;
+        height: 400px;
+    }
+
+    .home-main-emoji {
+        font-size: 8rem;
+    }
+
+    .home-circle-calendar,
+    .home-circle-health,
+    .home-circle-alerts,
+    .home-circle-tips {
+        width: 180px;
+        height: 180px;
+    }
+
+    .home-circle-calendar i,
+    .home-circle-health i,
+    .home-circle-alerts i,
+    .home-circle-tips i {
+        font-size: 4rem !important;
+    }
+}
