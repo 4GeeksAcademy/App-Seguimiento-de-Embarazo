@@ -130,17 +130,13 @@ export const logoutUser = () => {
 
 export const fetchNoticiasSalud = async () => {
   try {
-    const API_KEY = import.meta.env.VITE_CORS_API_KEY;
     
-    const baseUrl = 'https://corsproxy.io/';
+    const proxyUrl = 'https://corsproxy.io/?';
     const targetUrl = 'https://www.cuidadodesalud.gov/api/index.json';
+    const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
     
-    const proxyUrl = `${baseUrl}?key=${API_KEY}&url=${encodeURIComponent(targetUrl)}`;
-    
-    const response = await fetch(proxyUrl);
-
     if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+      throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
     }
     
     const data = await response.json();
@@ -202,7 +198,7 @@ export const fetchNoticiasSalud = async () => {
       };
     });
     
-    console.log(`Se encontraron noticias`);
+    console.log(`Se encontraron ${contenidoFiltrado.length} noticias, mostrando ${noticiasFormateadas.length}`);
     
     return { success: true, data: noticiasFormateadas };
     
