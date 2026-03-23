@@ -76,7 +76,7 @@ body {
 }
 
 .custom-btn {
-    background-color: #111 !important;
+    background-color: #8f33da !important;
     color: #ffffff !important;
     border-radius: 999px !important;
     padding: 8px 20px !important;
@@ -90,7 +90,7 @@ body {
 }
 
 .custom-btn:hover {
-    background-color: #222 !important;
+    background-color: #5e06a7  !important;
 }
 
 /* ============================= */

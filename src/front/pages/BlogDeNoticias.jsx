@@ -38,7 +38,6 @@ export const BlogDeNoticias = () => {
         <p className="lead text-muted">
           Información de CuidadoDeSalud.gov
         </p>
-        {error && (<div className="alert alert-warning mt-3" role="alert">{error}</div>)}
       </div>
       <div className="row">
         {noticias.map(noticia => (<BlogCard key={noticia.id} noticia={noticia} />))}
