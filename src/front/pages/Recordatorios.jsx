@@ -63,6 +63,7 @@ const Recordatorios = () => {
     }, []);
 
     return (
+        
         <div className="container mt-5 mb-5">
             <div className="row justify-content-center">
                 <div className="col-lg-6 col-md-8">

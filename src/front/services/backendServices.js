@@ -204,6 +204,82 @@ export const fetchNoticiasSalud = async () => {
     
   } catch (error) {
     console.error("Error:", error);
+
+    const datosRespaldo = [
+      {
+        id: 1,
+        titulo: "La importancia del control prenatal durante el embarazo",
+        descripcion: "Los chequeos regulares durante el embarazo son fundamentales para garantizar la salud de la madre y el bebé. Descubre qué esperar en cada trimestre.",
+        imagen: "https://images.pexels.com/photos/4173251/pexels-photo-4173251.jpeg",
+        fecha: "15 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 2,
+        titulo: "Alimentación saludable para futuras mamás",
+        descripcion: "Una nutrición adecuada durante el embarazo es esencial. Conoce los alimentos que no pueden faltar en tu dieta y cuáles debes evitar.",
+        imagen: "https://images.pexels.com/photos/1556652/pexels-photo-1556652.jpeg",
+        fecha: "12 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 3,
+        titulo: "Beneficios de la lactancia materna para el recién nacido",
+        descripcion: "La leche materna proporciona todos los nutrientes que tu bebé necesita en sus primeros meses, además de fortalecer su sistema inmunológico.",
+        imagen: "https://mcpress.mayoclinic.org/uploads/2022/08/NewbornScreeningxGettyImagesx583992212-1120x640.jpg",
+        fecha: "10 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 4,
+        titulo: "Ejercicios seguros durante el embarazo",
+        descripcion: "Mantenerse activa durante la gestación trae múltiples beneficios. Te mostramos las actividades más recomendadas por especialistas.",
+        imagen: "https://cdn.prod.website-files.com/66bd394eedeb9d6ee29898c6/682f5450a046c241920c1e6f_Three%20doctors%20standing%20side%20by%20side%2C%20crossing%20their%20arms.jpg",
+        fecha: "8 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 5,
+        titulo: "Preparación para el parto: qué debes saber",
+        descripcion: "Conoce las señales de trabajo de parto, los tipos de parto y cómo prepararte para este momento tan importante.",
+        imagen: "https://www.babyfresh.co/cdn/shop/articles/Como-conectar-con-tu-bebe-durante-el-embarazo_e3a8ea7a-bf43-464c-ac01-63e496c1ca58.jpg?v=1765291713",
+        fecha: "5 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 6,
+        titulo: "Cuidados postparto: recuperación después del nacimiento",
+        descripcion: "El periodo postparto es crucial para la recuperación física y emocional. Consejos para una recuperación saludable.",
+        imagen: "https://images.pexels.com/photos/4173251/pexels-photo-4173251.jpeg",
+        fecha: "3 de marzo de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 7,
+        titulo: "Primeros cuidados del recién nacido en casa",
+        descripcion: "Todo lo que necesitas saber sobre baño, alimentación, sueño y cuidados básicos para tu bebé en sus primeros días.",
+        imagen: "https://mcpress.mayoclinic.org/uploads/2022/08/NewbornScreeningxGettyImagesx583992212-1120x640.jpg",
+        fecha: "28 de febrero de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 8,
+        titulo: "Cómo elegir al pediatra adecuado para tu bebé",
+        descripcion: "Factores a considerar al seleccionar al profesional que acompañará el crecimiento y desarrollo de tu hijo.",
+        imagen: "https://cdn.prod.website-files.com/66bd394eedeb9d6ee29898c6/682f5450a046c241920c1e6f_Three%20doctors%20standing%20side%20by%20side%2C%20crossing%20their%20arms.jpg",
+        fecha: "25 de febrero de 2026",
+        urlOriginal: null
+      },
+      {
+        id: 9,
+        titulo: "Vacunación durante el embarazo y primeros meses del bebé",
+        descripcion: "Calendario de vacunación recomendado para proteger a la madre y al recién nacido.",
+        imagen: "https://images.pexels.com/photos/1556652/pexels-photo-1556652.jpeg",
+        fecha: "22 de febrero de 2026",
+        urlOriginal: null
+      }
+    ];
+    
     
     return { 
       success: false, 

@@ -56,7 +56,9 @@ export const Navbar = () => {
 						<li className="nav-item">
 							<Link className="nav-link custom-link" to="/contact" onClick={() => setMenuOpen(false)}>Contacto</Link>
 						</li>
-						
+						<li className="nav-item">
+							<Link className="nav-link custom-link" to="/Blog" onClick={() => setMenuOpen(false)}>Blog de noticias</Link>
+						</li>
 
 						<li className="nav-item">
 							{store.token && (

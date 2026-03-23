@@ -84,10 +84,6 @@ export const Information = () => {
                                 <i className="fas fa-check-circle text-success me-2 fs-5"></i>
                                 <strong>Contenido personalizado:</strong> Artículos y consejos según tu etapa gestacional
                             </li>
-                            <li className="mb-3">
-                                <i className="fas fa-check-circle text-success me-2 fs-5"></i>
-                                <strong>Comunidad de apoyo:</strong> Conecta con otras futuras mamás
-                            </li>
                         </ul>
                     </div>
                 </div>
