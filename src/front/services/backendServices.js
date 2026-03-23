@@ -127,13 +127,18 @@ export const logoutUser = () => {
   localStorage.removeItem("user");
 };
 
+
 export const fetchNoticiasSalud = async () => {
   try {
-    const proxyUrl = 'https://corsproxy.io/?';
+    const API_KEY = import.meta.env.VITE_CORS_API_KEY;
+    
+    const baseUrl = 'https://corsproxy.io/';
     const targetUrl = 'https://www.cuidadodesalud.gov/api/index.json';
     
-    const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+    const proxyUrl = `${baseUrl}?key=${API_KEY}&url=${encodeURIComponent(targetUrl)}`;
     
+    const response = await fetch(proxyUrl);
+
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
@@ -197,7 +202,7 @@ export const fetchNoticiasSalud = async () => {
       };
     });
     
-    console.log(`Se encontraron ${contenidoFiltrado.length} noticias, mostrando ${noticiasFormateadas.length}`);
+    console.log(`Se encontraron noticias`);
     
     return { success: true, data: noticiasFormateadas };
     
