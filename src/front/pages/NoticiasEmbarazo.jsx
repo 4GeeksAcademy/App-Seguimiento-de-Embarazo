@@ -8,7 +8,7 @@ export const NoticiasEmbarazo = () => {
             <div className="text-center mb-5">
                 <h1 className="display-4 fw-bold text-primary mb-3">
                     <i className="fas fa-newspaper me-3"></i>
-                    Noticias sobre el Embarazo
+                    Datos sobre el Embarazo
                 </h1>
                 <p className="lead text-muted">
                     Información actualizada 2026 para acompañarte en esta hermosa etapa

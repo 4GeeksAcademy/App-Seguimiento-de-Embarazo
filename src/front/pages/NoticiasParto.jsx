@@ -8,7 +8,7 @@ export const Noticias = () => {
             <div className="text-center mb-5">
                 <h1 className="display-4 fw-bold text-primary mb-3">
                     <i className="fas fa-baby me-3"></i>
-                    Noticias sobre el Parto
+                    Datos sobre el Parto
                 </h1>
                 <p className="lead text-muted">
                     Información actualizada y confiable para prepararte para el gran día

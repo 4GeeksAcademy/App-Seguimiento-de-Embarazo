@@ -30,9 +30,9 @@ export const Navbar = () => {
 				<Link to="/">
 					<img src="logo.png" width="70" alt="logo" />
 				</Link>
-				<h6 className="fw-bold">
+				<h3 className="fw-bold">
 					BabyFlow
-				</h6>
+				</h3>
 
 				<button
 					className="navbar-toggler"

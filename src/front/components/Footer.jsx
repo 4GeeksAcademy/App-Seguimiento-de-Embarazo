@@ -80,13 +80,13 @@ export const Footer = () => {
           <div className="col-12 col-md-3">
             
             <div className="text-center text-md-start">
-              <h6 className="fw-bold mb-2">Noticias Médicas</h6>
+              <h6 className="fw-bold mb-2">Datos de interes</h6>
               <nav className="d-flex flex-column align-items-center align-items-md-start">
                 <a href="/noticias" className="text-dark text-decoration-none mb-1">
-                  Noticias Sobre el Parto
+                  Sobre el Parto
                 </a>
                 <a href="/noticiasEm" className="text-dark text-decoration-none mb-1">
-                  Noticias Sobre el Embarazo
+                  Sobre el Embarazo
                 </a>
                 <a href="/avances" className="text-dark text-decoration-none mb-1">
                   Avances Médicos
