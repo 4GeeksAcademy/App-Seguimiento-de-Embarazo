@@ -111,7 +111,7 @@ export const Dashboard = () => {
                             <i className="fas fa-bell me-2"></i> Recordatorios
                         </button>
                     </div>
-                    <h1 className="display-4 fw-bold mb-2">¡Hola, mamá!</h1>
+                    <h1 className="display-4 fw-bold mb-2 mt-4">¡Hola, mamá!</h1>
                     <p className="fs-4 fw-light opacity-90 italic">"{data.mensaje}"</p>
                 </div>
 
@@ -257,7 +257,7 @@ export const Dashboard = () => {
                                         </div>
                                     </div>
                                     <div className="col-12 text-end pt-4">
-                                        <button type="submit" className="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-lg border-0 transition-all hover-scale">
+                                        <button type="submit" className="btn custom-btn px-5 py-3 rounded-pill fw-bold shadow-lg border-0 transition-all hover-scale">
                                             <i className="fas fa-heart me-2"></i> Guardar Todo
                                         </button>
                                     </div>
@@ -269,14 +269,14 @@ export const Dashboard = () => {
                     <div className="col-lg-4">
                         <div className="glass-card p-5 text-center mb-4 shadow-sm" style={{ borderBottom: '8px solid #a855f7' }}>
                             <h6 className="text-muted small fw-bold uppercase ls-2 mb-3">DÍAS PARA CONOCERLO</h6>
-                            <div className="display-1 fw-bold text-dark">{data.dias_restantes}</div>
-                            <span className="badge bg-light text-primary rounded-pill px-3 py-2 fw-bold">DÍAS RESTANTES</span>
+                            <div className="display-1 fw-bold text-dark" >{data.dias_restantes}</div>
+                            <span className="badge bg-light rounded-pill px-3 py-2 fw-bold" style={{ color: '#8f33da' }}>DÍAS RESTANTES</span>
                             <hr className="my-4 opacity-10" />
                             <div className="small fw-bold text-muted uppercase">Fecha Probable de Parto</div>
                             <div className="text-dark fw-bold fs-5">{data.salud?.fpp}</div>
                         </div>
 
-                        <div className="glass-card p-4 mb-4" style={{ borderLeft: '6px solid #6366f1' }}>
+                        <div className="glass-card p-4 mb-4" style={{ borderLeft: '8px solid #a855f7' }}>
                             <div className="d-flex align-items-center mb-3">
                                 <i className="fas fa-lightbulb text-warning fs-4 me-3"></i>
                                 <h6 className="fw-bold m-0 uppercase text-muted">Consejo para hoy</h6>

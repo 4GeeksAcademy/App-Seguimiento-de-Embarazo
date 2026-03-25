@@ -43,7 +43,7 @@ export const BlogDeNoticias = () => {
         {noticias.map(noticia => (<BlogCard key={noticia.id} noticia={noticia} />))}
       </div>
       <div className="text-center mt-5">
-        <button className="btn btn-primary btn-lg px-5 py-3 rounded-pill"
+        <button className="btn custom-btn btn-lg px-5 py-3 rounded-pill"
           onClick={() => navigate("/contact")}>
           <i className="fas fa-envelope me-2"></i>
           Contáctanos

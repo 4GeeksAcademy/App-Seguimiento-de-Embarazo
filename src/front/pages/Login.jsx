@@ -51,7 +51,7 @@ export const Login = () => {
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-5">
                                 <div className="text-center mb-4">
-                                    <i className="fas fa-sign-in-alt fa-4x text-primary mb-3"></i>
+                                    <i className="fas fa-sign-in-alt fa-4x mb-3" style={{ color: '#8f33da' }}></i>
                                 </div>
                                 <h3 className="text-center mb-4">Log in</h3>
                                 {error && (
@@ -92,7 +92,7 @@ export const Login = () => {
                                         />
                                     </div>
 
-                                    <button type="submit" className="btn btn-primary w-100 mb-3">
+                                    <button type="submit" className="btn custom-btn w-100 mb-3">
                                         <i className="fas fa-sign-in-alt me-2"></i>Log in
                                     </button>
                                 </form>
@@ -101,7 +101,7 @@ export const Login = () => {
                                     <p className="text-muted mb-2">¿No tienes una cuenta?</p>
                                     <button
                                         onClick={handleRegisterClick}
-                                        className="btn btn-outline-primary w-100">
+                                        className="btn custom-btn w-100">
                                         <i className="fas fa-user-plus me-2"></i>Regístrate aquí
                                     </button>
                                 </div>

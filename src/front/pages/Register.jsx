@@ -38,7 +38,7 @@ export const Register = () => {
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-5">
                                 <div className="text-center mb-4">
-                                    <i className="fas fa-user-plus fa-4x text-primary mb-3"></i>
+                                    <i className="fas fa-baby fa-4x mb-3" style={{ color: '#8f33da' }}></i>
                                 </div>
 
 
@@ -76,7 +76,7 @@ export const Register = () => {
                                             className="form-control" value={user.apellido}
                                             onChange={handleChange} />
                                     </div>
-                                    <button type="submit" className="btn btn-primary w-100" >Create a user</button>
+                                    <button type="submit" className="btn custom-btn w-100" >Create a user</button>
                                 </form>
 
 
